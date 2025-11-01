@@ -1,0 +1,63 @@
+<nav class="bg-gray-100 rounded-full shadow-sm mt-6 mx-auto max-w-[1200px]">
+  <ul class="flex items-center justify-between px-20 py-1 text-gray-700">
+
+    <!-- Productos -->
+    <li>
+      <a
+        routerLink="productos"
+        routerLinkActive="bg-white shadow text-gray-900 font-semibold"
+        class="flex items-center gap-2 px-6 py-2 rounded-full transition hover:bg-white hover:shadow"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z"/>
+        </svg>
+        <span>Productos</span>
+      </a>
+    </li>
+
+    <!-- Usuarios -->
+    <li>
+      <a
+        routerLink="usuarios"
+        routerLinkActive="bg-white shadow text-gray-900 font-semibold"
+        class="flex items-center gap-2 px-6 py-2 rounded-full transition hover:bg-white hover:shadow"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-3-3.87M12 3a4 4 0 1 1-4 4 4 4 0 0 1 4-4Zm0 14a4 4 0 0 0-4 4v2"/>
+        </svg>
+        <span>Usuarios</span>
+      </a>
+    </li>
+
+    <!-- Promociones -->
+    <li>
+      <a
+        routerLink="promociones"
+        routerLinkActive="bg-white shadow text-gray-900 font-semibold"
+        class="flex items-center gap-2 px-6 py-2 rounded-full transition hover:bg-white hover:shadow"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 8l7.89 7.89a2 2 0 0 0 2.82 0L21 8l-9-6z" />
+        </svg>
+        <span>Promociones</span>
+      </a>
+    </li>
+
+    <!-- Reportes -->
+    <li>
+      <a
+        routerLink="reportes"
+        routerLinkActive="bg-white shadow text-gray-900 font-semibold"
+        class="flex items-center gap-2 px-6 py-2 rounded-full transition hover:bg-white hover:shadow"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 21V8m6 13V3m6 18v-6m6 6v-9" />
+        </svg>
+        <span>Reportes</span>
+      </a>
+    </li>
+
+  </ul>
+</nav>
+
+<router-outlet></router-outlet>

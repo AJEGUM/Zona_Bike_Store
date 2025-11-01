@@ -1,0 +1,59 @@
+<div class="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+  
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">
+    Lista de Productos
+  </h2>
+
+  <!-- Cargando -->
+  <div *ngIf="cargando" class="text-center py-6 text-gray-600">
+    Cargando productos...
+  </div>
+
+  <!-- Tabla responsive -->
+  <div class="overflow-x-auto mt-4">
+    <table class="w-full border-collapse rounded-lg overflow-hidden">
+      
+      <thead class="bg-gray-800 text-white">
+        <tr>
+          <th class="px-4 py-3 text-left">Producto</th>
+          <th class="px-4 py-3 text-left">Categoría</th>
+          <th class="px-4 py-3 text-left">Precio</th>
+          <th class="px-4 py-3 text-left">Estado</th>
+          <th class="px-4 py-3 text-left">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody class="text-gray-700">
+        <tr *ngFor="let p of productos" class="border-b hover:bg-gray-100 transition">
+
+          <td class="px-4 py-3 font-semibold">
+            {{ p.producto }}
+          </td>
+
+          <td class="px-4 py-3">
+            {{ p.categoria }}
+          </td>
+
+          <td class="px-4 py-3">
+            ${{ p.precio }}
+          </td>
+
+          <td class="px-4 py-3">
+            <span
+              class="px-3 py-1 rounded-full text-sm font-medium"
+              [ngClass]="{
+                'bg-green-100 text-green-700': p.estado === 'activo',
+                'bg-red-100 text-red-700': p.estado === 'inactivo'
+              }"
+            >
+              {{ p.estado }}
+            </span>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+</div>
+

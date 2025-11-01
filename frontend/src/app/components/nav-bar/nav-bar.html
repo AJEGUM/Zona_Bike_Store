@@ -1,0 +1,41 @@
+<nav class="w-full bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 py-8 flex items-center justify-between">
+    
+    <!-- Logo + Nombre -->
+    <div class="flex items-center space-x-2">
+      <img src="ruta-logo.svg" class="w-7 h-7" alt="Logo">
+      <span class="text-3xl font-bold">Zona Bike Store</span>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="flex-1 mx-8">
+      <div class="relative">
+        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+          <!-- Icono búsqueda -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.15-5.4a6.55 6.55 0 11-13.1 0 6.55 6.55 0 0113.1 0z" />
+          </svg>
+        </span>
+        <input type="text" placeholder="Buscar productos..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"/>
+      </div>
+    </div>
+
+    <!-- Menú derecho -->
+    <div class="flex items-center space-x-6 text-sm">
+      <a href="#" class="text-gray-900 font-bold hover:text-gray-800">Ingresar</a>
+
+      <!-- Icono carrito -->
+      <button class="p-2 rounded-xl bg-white border hover:bg-gray-100 transition cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" 
+             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+<app-footer></app-footer>

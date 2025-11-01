@@ -1,0 +1,42 @@
+{
+"version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Iniciar Backend",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always",
+        "echo": true
+      }
+    },
+    {
+      "label": "Iniciar Frontend",
+      "type": "shell",
+      "command": "npx ng serve",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always",
+        "echo": true
+      }
+    },
+    {
+      "label": "Iniciar Todo",
+      "dependsOn": ["Iniciar Backend", "Iniciar Frontend"],
+      "dependsOrder": "parallel"
+    }
+  ]
+}
