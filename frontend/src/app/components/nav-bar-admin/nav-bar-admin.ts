@@ -4,17 +4,18 @@ import { Footer } from '../footer/footer';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ModalUsuario } from '../modal-usuario/modal-usuario';
+import { ModalProducto } from '../modal-producto/modal-producto';
 
 @Component({
   selector: 'app-nav-bar-admin',
   standalone: true,
-  imports: [RouterModule, Footer, CommonModule, ModalUsuario],
+  imports: [RouterModule, Footer, CommonModule, ModalUsuario, ModalProducto],
   templateUrl: './nav-bar-admin.html',
   styles: ``,
 })
 export class NavBarAdmin {
  titulo = 'Panel de Administración';
-  modalAbierto = false;
+  modalTipo: 'usuario' | 'producto' | null = null;
 
   constructor(private router: Router) {
     this.router.events
@@ -31,20 +32,24 @@ export class NavBarAdmin {
     else this.titulo = 'Panel de Administración';
   }
 
-  abrirModal() {
-    this.modalAbierto = true;
+  abrirModal(tipo: 'usuario' | 'producto') {
+    this.modalTipo = tipo;
   }
 
   cerrarModal() {
-    this.modalAbierto = false;
+    this.modalTipo = null;
   }
 
   obtenerTituloModal() {
     return `Nuevo ${this.titulo.split(' ')[2] || 'registro'}`;
   }
 
-  onUsuarioCreado(usuario: any) {
+  UsuarioCreado(usuario: any) {
     console.log('Usuario creado:', usuario);
-    // aquí puedes refrescar la lista de usuarios si quieres
   }
+
+  ProductoCreado(producto: any) {
+    console.log('Producto creado:', producto);
+  }
+
 }

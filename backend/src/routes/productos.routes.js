@@ -1,8 +1,13 @@
 const express = require('express');
-const UsuariosController = require('../controllers/productos.controller');
+const ProductosController = require('../controllers/productos.controller');
 const router = express.Router();
-const usuariosController = new UsuariosController();
+const productosController = new ProductosController();
 
-router.get('/', (req, res) => usuariosController.obtenerProductosController(req, res));
+router.get('/categorias', (req, res) => productosController.obtenerCategorias(req, res));
+router.get('/marcas', (req, res) => productosController.obtenerMarcas(req, res));
+router.get('/', (req, res) => productosController.obtenerProductos(req, res));
+router.post('/', (req, res) => productosController.crearProducto(req, res));
+router.put('/:id', (req, res) => productosController.actualizarProducto(req, res));
+router.delete('/:id', (req, res) => productosController.eliminarProducto(req, res));
 
 module.exports = router;

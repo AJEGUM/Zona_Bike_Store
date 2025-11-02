@@ -1,0 +1,43 @@
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div
+    class="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-md relative animate-fadeInUp"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      (click)="cerrar.emit()"
+      class="absolute top-2 right-3 text-gray-500 hover:text-gray-800"
+    >
+      ✕
+    </button>
+
+    <h2 class="text-xl font-semibold mb-4">
+      {{ productoEditar ? 'Editar producto' : 'Registrar nuevo producto' }}
+    </h2>
+
+    <form class="space-y-3" [formGroup]="form" (ngSubmit)="guardar()">
+      <input type="text" placeholder="Nombre" formControlName="nombre" class="border rounded-lg w-full p-2 text-sm" />
+      <input type="number" placeholder="Precio" formControlName="precio" class="border rounded-lg w-full p-2 text-sm" />
+      <input type="text" placeholder="Descripción" formControlName="descripcion" class="border rounded-lg w-full p-2 text-sm" />
+      <input type="text" placeholder="Imagen URL" formControlName="imagen" class="border rounded-lg w-full p-2 text-sm" />
+      
+      <select formControlName="id_categoria" class="border rounded-lg w-full p-2 text-sm">
+        <option value="">Seleccionar categoría</option>
+        <option *ngFor="let c of categorias" [value]="c.id_categoria">{{ c.nombre }}</option>
+      </select>
+
+      <select formControlName="id_marca" class="border rounded-lg w-full p-2 text-sm">
+        <option value="">Seleccionar marca</option>
+        <option *ngFor="let m of marcas" [value]="m.id_marca">{{ m.nombre }}</option>
+      </select>
+
+      <select formControlName="estado" class="border rounded-lg w-full p-2 text-sm">
+        <option value="activo">Activo</option>
+        <option value="inactivo">Inactivo</option>
+      </select>
+      
+      <button type="submit" class="bg-[#0B1120] text-white px-3 py-2 rounded-lg w-full hover:bg-[#1A2238]">
+        {{ productoEditar ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </form>
+  </div>
+</div>

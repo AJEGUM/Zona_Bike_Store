@@ -70,7 +70,7 @@
     <!-- 🪄 Botón para abrir modal de usuario -->
     <button
       *ngIf="titulo === 'Gestión de usuarios'"
-      (click)="abrirModal()"
+      (click)="abrirModal('usuario')"
       class="bg-[#0B1120] hover:bg-[#1A2238] text-white font-semibold text-sm px-4 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all active:scale-95"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -79,6 +79,18 @@
       </svg>
       <span>Nuevo usuario</span>
     </button>
+
+      <button
+        *ngIf="titulo === 'Gestión de productos'"
+        (click)="abrirModal('producto')"
+        class="bg-[#0B1120] hover:bg-[#1A2238] text-white font-semibold text-sm px-4 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all active:scale-95"
+      >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+         stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+    <span>Nuevo producto</span>
+  </button>
   </div>
 </div>
 
@@ -86,10 +98,20 @@
 <router-outlet></router-outlet>
 <app-footer></app-footer>
 
-<!-- 🎯 Modal Standalone -->
+<!-- MODALES -->>
+
+<!-- Modal Usuarios -->
 <app-modal-usuario
-  *ngIf="modalAbierto"
+  *ngIf="modalTipo === 'usuario'"
   (cerrar)="cerrarModal()"
-  (usuarioCreado)="onUsuarioCreado($event)"
+  (usuarioCreado)="UsuarioCreado($event)"
 ></app-modal-usuario>
+
+<!-- Modal Productos -->
+<app-modal-producto
+  *ngIf="modalTipo === 'producto'"
+  (cerrar)="cerrarModal()"
+  (productoCreado)="ProductoCreado($event)"
+></app-modal-producto>
+
 
