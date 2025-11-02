@@ -1,57 +1,40 @@
-<div class="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
-  
-  <h2 class="text-2xl font-bold mb-6 text-gray-800">Usuarios</h2>
-
-  <!-- Cargando -->
-  <div *ngIf="cargando" class="text-center text-gray-500 py-6">
-    Cargando usuarios...
-  </div>
-
-  <!-- Tabla -->
-  <div *ngIf="!cargando" class="overflow-x-auto">
-    <table class="w-full border-collapse rounded-lg overflow-hidden">
-
-      <thead class="bg-gray-800 text-white">
+<div class="mx-20">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm text-left border border-gray-300 rounded-lg border-separate border-spacing-0">
+      <thead>
         <tr>
-          <th class="px-4 py-3 text-left">ID</th>
-          <th class="px-4 py-3 text-left">Nombre</th>
-          <th class="px-4 py-3 text-left">Email</th>
-          <th class="px-4 py-3 text-left">Rol</th>
-          <th class="px-4 py-3 text-left">Permisos</th>
-          <th class="px-4 py-3 text-center">Acciones</th>
+          <th class="px-4 py-3 font-semibold border-b border-gray-300 rounded-tl-lg">Nombre</th>
+          <th class="px-4 py-3 font-semibold border-b border-gray-300">Email</th>
+          <th class="px-4 py-3 font-semibold border-b border-gray-300">Rol</th>
+          <th class="px-4 py-3 text-center font-semibold border-b border-gray-300 rounded-tr-lg">Acciones</th>
         </tr>
       </thead>
 
-      <tbody class="text-gray-700 bg-white">
-        <tr *ngFor="let u of usuarios" class="border-b hover:bg-gray-100 transition">
-
-          <td class="px-4 py-3">{{ u.id_usuario }}</td>
-          <td class="px-4 py-3 font-semibold">{{ u.nombre }}</td>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let u of usuarios" class="hover:bg-gray-50 transition">
+          <td class="px-4 py-3">{{ u.nombre }}</td>
           <td class="px-4 py-3">{{ u.email }}</td>
-          <td class="px-4 py-3">{{ u.rol }}</td>
-
-          <!-- Permisos: JSON array -->
           <td class="px-4 py-3">
-            <span *ngFor="let perm of u.permisos" class="bg-gray-200 text-xs px-2 py-1 rounded-full mr-1">
-              {{ perm }}
+            <span class="px-2 py-1 rounded-md text-xs font-semibold"
+                  [ngClass]="{
+                    'bg-gray-100': u.rol === 'Cliente',
+                    'bg-black text-white': u.rol === 'Administrador'
+                  }">
+              {{ u.rol }}
             </span>
           </td>
-
           <td class="px-4 py-3 text-center">
-
-            <button
-              class="px-3 py-1 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 mr-2"
-            >Editar</button>
-
-            <button
-              class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
-            >Eliminar</button>
-
+            <button (click)="eliminar(u.id_usuario)">Eliminar</button>
           </td>
-
         </tr>
       </tbody>
-
     </table>
   </div>
 </div>
+
+<!-- Modal -->
+<app-modal-usuario
+  *ngIf="modalAbierto"
+  (cerrar)="modalAbierto = false"
+  (usuarioCreado)="agregarUsuarioALista($event)"
+></app-modal-usuario>

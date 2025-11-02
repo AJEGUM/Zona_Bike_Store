@@ -3,94 +3,56 @@ const bcrypt = require('bcrypt');
 
 class UsuariosController {
   // Obtener todos los usuarios con su rol
-async obtenerUsuarios(req, res) {
-  try {
-    const [usuarios] = await db.query(
-      `SELECT u.id_usuario, u.nombre, u.email, r.nombre AS rol,
-       COALESCE(JSON_ARRAYAGG(p.nombre), JSON_ARRAY()) AS permisos
+  async obtenerUsuarios(req, res) {
+    try {
+      const [usuarios] = await db.query(`
+        SELECT u.id_usuario, u.nombre, u.email, r.nombre AS rol
         FROM usuarios u
         LEFT JOIN roles r ON u.id_rol = r.id_rol
-        LEFT JOIN rol_permiso rp ON r.id_rol = rp.id_rol
-        LEFT JOIN permisos p ON rp.permiso_id = p.id_permiso
-        GROUP BY u.id_usuario, u.nombre, u.email, r.nombre;
-        `
-    );
-
-    res.json(usuarios);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener usuarios' });
-  }
-}
-
-async obtenerUsuarioPorId(req, res) {
-  const { id } = req.params;
-  try {
-    const [usuario] = await db.query(
-      `SELECT 
-         u.id_usuario,
-         u.nombre,
-         u.email,
-         r.nombre AS rol,
-         COALESCE(GROUP_CONCAT(p.nombre SEPARATOR ', '), 'Sin permisos') AS permisos
-       FROM usuarios u
-       LEFT JOIN roles r ON u.id_rol = r.id_rol
-       LEFT JOIN rol_permiso rp ON r.id_rol = rp.id_rol
-       LEFT JOIN permisos p ON rp.permiso_id = p.id_permiso
-       WHERE u.id_usuario = ?
-       GROUP BY u.id_usuario, u.nombre, u.email, r.nombre`,
-      [id]
-    );
-
-    if (usuario.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      `);
+      res.json(usuarios);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al obtener usuarios' });
     }
-
-    res.json(usuario[0]);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener usuario' });
   }
-}
 
-
-
-  // Agregar un usuario nuevo
+  // Agregar usuario
   async agregarUsuario(req, res) {
     const { nombre, email, clave, id_rol } = req.body;
     try {
-      // Cifrar clave
       const hash = await bcrypt.hash(clave, 10);
 
-      await db.query(
+      const [result] = await db.query(
         'INSERT INTO usuarios (nombre, email, clave, id_rol) VALUES (?, ?, ?, ?)',
         [nombre, email, hash, id_rol]
       );
-      res.json({ mensaje: 'Usuario agregado correctamente' });
+
+      // Obtener el nombre del rol
+      const rolNombre = await this.obtenerNombreRol(id_rol);
+
+      const nuevoUsuario = {
+        id_usuario: result.insertId,
+        nombre,
+        email,
+        rol: rolNombre
+      };
+
+      res.json(nuevoUsuario);
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: 'Error al agregar usuario' });
     }
   }
 
-  // Actualizar usuario (opcionalmente cambiar clave)
-  async actualizarUsuario(req, res) {
-    const { id } = req.params;
-    const { nombre, email, clave, id_rol } = req.body;
+  // Función auxiliar para obtener nombre de rol
+  async obtenerNombreRol(id_rol) {
     try {
-      if (clave && clave.trim() !== '') {
-        const hash = await bcrypt.hash(clave, 10);
-        await db.query(
-          'UPDATE usuarios SET nombre = ?, email = ?, clave = ?, id_rol = ? WHERE id_usuario = ?',
-          [nombre, email, hash, id_rol, id]
-        );
-      } else {
-        await db.query(
-          'UPDATE usuarios SET nombre = ?, email = ?, id_rol = ? WHERE id_usuario = ?',
-          [nombre, email, id_rol, id]
-        );
-      }
-      res.json({ mensaje: 'Usuario actualizado correctamente' });
+      const [rows] = await db.query('SELECT nombre FROM roles WHERE id_rol = ?', [id_rol]);
+      return rows.length ? rows[0].nombre : '';
     } catch (error) {
-      res.status(500).json({ error: 'Error al actualizar usuario' });
+      console.error('Error al obtener nombre del rol:', error);
+      return '';
     }
   }
 
@@ -102,6 +64,17 @@ async obtenerUsuarioPorId(req, res) {
       res.json({ mensaje: 'Usuario eliminado correctamente' });
     } catch (error) {
       res.status(500).json({ error: 'Error al eliminar usuario' });
+    }
+  }
+
+  // Obtener roles
+  async obtenerRoles(req, res) {
+    try {
+      const [roles] = await db.query('SELECT id_rol, nombre FROM roles');
+      res.json(roles);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al obtener roles' });
     }
   }
 }
