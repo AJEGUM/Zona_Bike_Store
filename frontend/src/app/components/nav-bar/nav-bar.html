@@ -1,24 +1,15 @@
 <nav class="w-full bg-white shadow-sm fixed z-50 top-0">
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
-    <!-- LOGO -->
-    <div class="flex items-center space-x-2 flex-shrink-0">
+    <!-- LOGO (solo desktop) -->
+    <div class="hidden lg:flex items-center space-x-2 flex-shrink-0">
       <img src="" class="w-7 h-7" alt="Logo">
       <span class="text-2xl font-bold">Zona Bike Store</span>
     </div>
 
-    <!-- BOTÓN HAMBURGUESA (solo móvil) -->
-    <button class="lg:hidden p-2 rounded-md border border-gray-300" (click)="abrirmenu()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" 
-           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
-
-    <!-- BÚSQUEDA ESCRITORIO -->
-    <div class="hidden lg:flex flex-1 justify-center px-10">
-      <div class="relative w-full max-w-xl">
+    <!-- BÚSQUEDA (siempre visible, ocupa más en móvil) -->
+    <div class="flex-1 px-2">
+      <div class="relative w-full max-w-xl mx-auto">
         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -27,10 +18,21 @@
           </svg>
         </span>
         <input type="text" placeholder="Buscar productos..."
-               class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700
-                      placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600"/>
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange()"
+              class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700
+                     placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600"/>
       </div>
     </div>
+
+    <!-- BOTÓN HAMBURGUESA (solo móvil) -->
+    <button class="lg:hidden p-2 rounded-md border border-gray-300 ml-2" (click)="abrirmenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" 
+           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
 
     <!-- DERECHA DESKTOP -->
     <div class="hidden lg:flex items-center space-x-6 text-sm">
@@ -43,7 +45,6 @@
         </svg>
       </button>
     </div>
-
   </div>
 </nav>
 
@@ -79,7 +80,6 @@
 </div>
 
 <!-- Contenido principal con padding para no ser tapado por navbar -->
-<div class="pt-16">
+<div class="pt-10">
   <router-outlet></router-outlet>
-  <app-footer></app-footer>
 </div>

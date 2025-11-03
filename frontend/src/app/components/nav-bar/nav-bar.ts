@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Footer } from '../footer/footer';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [RouterModule, Footer, CommonModule],
+  imports: [RouterModule, CommonModule, FormsModule],
   templateUrl: './nav-bar.html',
-  styleUrl: './nav-bar.css',
+  styleUrls: ['./nav-bar.css'],
 })
 export class NavBar {
   menuOpen: boolean = false;
+  searchTerm: string = '';
+
+  @Output() searchChanged = new EventEmitter<string>();
 
   abrirmenu() {
     this.menuOpen = !this.menuOpen;
@@ -19,5 +23,9 @@ export class NavBar {
 
   cerrarmenu() {
     this.menuOpen = false;
+  }
+
+  onSearchChange() {
+    this.searchChanged.emit(this.searchTerm);
   }
 }

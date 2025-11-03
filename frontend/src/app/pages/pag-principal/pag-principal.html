@@ -1,12 +1,14 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-15 py-10">
+<app-nav-bar (searchChanged)="filtrarProductos($event)"></app-nav-bar>
+<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-15">
 
     <h2 class="text-2xl font-semibold mb-8">Nuestro Catálogo</h2>
 
     <!-- GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div *ngIf="productosFiltrados.length > 0; else noProductos" 
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
         <!-- PRODUCTO -->
-        <div *ngFor="let p of productos"
+        <div *ngFor="let p of productosFiltrados"
             class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-200 bg-white flex flex-col group relative">
 
             <!-- IMAGEN GRANDE con hover -->
@@ -19,7 +21,6 @@
                 <!-- Ícono de ojo -->
                 <div
                     class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
-                    <!-- SVG de Material Angular ojo -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="currentColor"
                         viewBox="0 0 24 24">
                         <path
@@ -69,11 +70,17 @@
                     </div>
                 </div>
 
-
             </div>
 
         </div>
 
     </div>
+
+    <!-- MENSAJE CUANDO NO HAY PRODUCTOS -->
+    <ng-template #noProductos>
+        <div class="text-center text-gray-500 py-20 text-lg font-semibold">
+            No se encontraron productos
+        </div>
+    </ng-template>
 
 </div>
