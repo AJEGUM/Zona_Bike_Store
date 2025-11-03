@@ -1,29 +1,28 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface Usuario {
+  id_usuario?: number;
   nombre: string;
   email: string;
-  clave: string;
+  clave?: string;
   id_rol: number;
+  rol?: string;
 }
-
 
 @Injectable({
   providedIn: 'root',
 })
-export class Usuarios {
+export class UsuariosService {
   
   private apiUrl = `${environment.apiUrl}/usuarios`;
-  private usuarioCreadoSource = new Subject<any>();
-  usuarioCreado$ = this.usuarioCreadoSource.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  obtenerUsuarios(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  obtenerUsuarios(): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(this.apiUrl);
   }
 
   eliminarUsuario(id: number): Observable<any> {
@@ -34,11 +33,11 @@ export class Usuarios {
     return this.http.post(this.apiUrl, usuario);
   }
 
-  obtenerRoles(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/roles`);
+  actualizarUsuario(id: number, usuario: Usuario): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, usuario);
   }
 
-  emitirUsuario(usuario: any) {
-    this.usuarioCreadoSource.next(usuario);
+  obtenerRoles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/roles`);
   }
 }

@@ -1,25 +1,35 @@
 import { Component } from '@angular/core';
-import { Usuarios } from '../../services/usuarios/usuarios';
+import { UsuariosService, Usuario } from '../../services/usuarios/usuarios';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pag-admin-usuarios',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pag-admin-usuarios.html',
-  styles: ``,
 })
 export class PagAdminUsuarios {
-  usuarios: any[] = [];
+
+  usuarios: Usuario[] = [];
+  roles: any[] = [];
+
   cargando = true;
   modalAbierto = false;
+  editando: Usuario | null = null;
 
-  constructor(private usuariosService: Usuarios) {}
+  form: Usuario = {
+    nombre: '',
+    email: '',
+    clave: '',
+    id_rol: 0
+  };
+
+  constructor(private usuariosService: UsuariosService) {}
 
   ngOnInit() {
     this.cargarUsuarios();
-
-    this.usuariosService.usuarioCreado$.subscribe(usuario => {this.usuarios = [...this.usuarios, usuario];});
+    this.cargarRoles();
   }
 
   cargarUsuarios() {
@@ -33,19 +43,62 @@ export class PagAdminUsuarios {
     });
   }
 
-  abrirModal() {
+  cargarRoles() {
+    this.usuariosService.obtenerRoles().subscribe(data => this.roles = data);
+  }
+
+  abrirModalCrear() {
+    this.editando = null;
+
+    this.form = {
+      nombre: '',
+      email: '',
+      clave: '',
+      id_rol: 0
+    };
+
     this.modalAbierto = true;
   }
 
-  agregarUsuarioALista(usuario: any) {
-    // Crear un nuevo array para que Angular detecte el cambio
-    this.usuarios = [...this.usuarios, usuario];
+  abrirModalEditar(usuario: Usuario) {
+    this.editando = usuario;
+
+    this.form = {
+      id_usuario: usuario.id_usuario,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      clave: '',
+      id_rol: this.roles.find(r => r.nombre === usuario.rol)?.id_rol
+    };
+
+    this.modalAbierto = true;
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
+  }
+
+  guardar() {
+    if (this.editando) {
+      this.usuariosService.actualizarUsuario(this.editando.id_usuario!, this.form)
+        .subscribe(() => {
+          this.cargarUsuarios();
+          this.cerrarModal();
+        });
+
+    } else {
+      this.usuariosService.crearUsuario(this.form)
+        .subscribe(() => {
+          this.cargarUsuarios();
+          this.cerrarModal();
+        });
+    }
   }
 
   eliminar(id: number) {
     if (confirm('¿Seguro que quieres eliminar este usuario?')) {
-      this.usuariosService.eliminarUsuario(id).subscribe({
-        next: () => this.usuarios = this.usuarios.filter(u => u.id_usuario !== id),
+      this.usuariosService.eliminarUsuario(id).subscribe(() => {
+        this.usuarios = this.usuarios.filter(u => u.id_usuario !== id);
       });
     }
   }

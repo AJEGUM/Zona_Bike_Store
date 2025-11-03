@@ -45,6 +45,40 @@ class UsuariosController {
     }
   }
 
+  async editarUsuario(req, res) {
+    const { id } = req.params;
+    const { nombre, email, clave, id_rol } = req.body;
+
+    try {
+      let hash = null;
+
+      // Si enviaron contraseña nueva → se encripta
+      if (clave) {
+        hash = await bcrypt.hash(clave, 10);
+      }
+
+      await db.query(`
+        UPDATE usuarios 
+        SET nombre=?, email=?, id_rol=?, clave = COALESCE(?, clave)
+        WHERE id_usuario=?
+      `, [nombre, email, id_rol, hash, id]);
+
+      const rol = await this.obtenerNombreRol(id_rol);
+
+      res.json({
+        id_usuario: Number(id),
+        nombre,
+        email,
+        rol
+      });
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al editar usuario' });
+    }
+  }
+
+
   // Función auxiliar para obtener nombre de rol
   async obtenerNombreRol(id_rol) {
     try {
