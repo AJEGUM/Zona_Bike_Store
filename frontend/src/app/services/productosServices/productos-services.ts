@@ -5,16 +5,28 @@ import { Observable, Subject } from 'rxjs';
 
 export interface Producto {
   id_producto?: number;
+
   nombre: string;
   descripcion: string;
   precio_venta: number;
   imagen: string;
+
   id_categoria: number;
   id_marca: number;
+
   estado?: string;
-  categoria?: { nombre: string };
-  marca?: { nombre: string };
+
+  categoria?: {
+    id_categoria: number;
+    nombre: string;
+  };
+
+  marca?: {
+    id_marca: number;
+    nombre: string;
+  };
 }
+
 
 @Injectable({
   providedIn: 'root',
@@ -22,8 +34,6 @@ export interface Producto {
 export class ProductosService {
 
   private apiUrl = `${environment.apiUrl}/productos`;
-  private productoCreadoSource = new Subject<Producto>();
-  productoCreado$ = this.productoCreadoSource.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -51,7 +61,4 @@ export class ProductosService {
     return this.http.get<any[]>(`${this.apiUrl}/marcas`);
   }
 
-  emitirProducto(producto: Producto) {
-    this.productoCreadoSource.next(producto);
-  }
 }
