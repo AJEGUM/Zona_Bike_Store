@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { Usuarios } from '../../services/usuarios/usuarios';
 import { CommonModule } from '@angular/common';
-import { ModalUsuario } from '../../components/modal-usuario/modal-usuario';
 
 @Component({
   selector: 'app-pag-admin-usuarios',
   standalone: true,
-  imports: [CommonModule, ModalUsuario],
+  imports: [CommonModule],
   templateUrl: './pag-admin-usuarios.html',
   styles: ``,
 })

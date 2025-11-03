@@ -2,41 +2,34 @@ const db = require('../config/db');
 
 class ServicesProductos {
 
-  async obtenerProductos() {
-    const [rows] = await db.query(`
-      SELECT 
-        p.id_producto,
-        p.nombre AS producto,
-        c.nombre AS categoria,
-        m.nombre AS marca,
-        p.precio_venta AS precio,
-        p.descripcion,
-        p.imagen,
-        p.estado
-      FROM productos p
-      INNER JOIN categorias c ON p.id_categoria = c.id_categoria
-      INNER JOIN marcas m ON p.id_marca = m.id_marca
-    `);
-    return rows;
-  }
+async obtenerProductos() {
+  const [rows] = await db.query(`
+    SELECT 
+      p.id_producto,
+      p.nombre,
+      p.precio_venta,
+      p.descripcion,
+      p.imagen,
+      p.estado,
+      
+      JSON_OBJECT(
+        'id_categoria', c.id_categoria,
+        'nombre', c.nombre
+      ) AS categoria,
 
-  async crearProducto(producto) {
-    const { nombre, precio_venta, id_categoria, id_marca, estado = 'activo' } = producto;
-    const [result] = await db.query(`
-      INSERT INTO productos (nombre, precio_venta, id_categoria, id_marca, estado)
-      VALUES (?, ?, ?, ?, ?)
-    `, [nombre, precio_venta, id_categoria, id_marca, estado]);
+      JSON_OBJECT(
+        'id_marca', m.id_marca,
+        'nombre', m.nombre
+      ) AS marca
 
-    // Solo devolvemos lo necesario para la tabla
-    return {
-      id_producto: result.insertId,
-      producto: nombre,
-      categoria: await this.obtenerCategorias(id_categoria),
-      marca: await this.obtenerMarcas(id_marca),
-      precio: precio_venta,
-      estado
-    };
-  }
+    FROM productos p
+    INNER JOIN categorias c ON p.id_categoria = c.id_categoria
+    INNER JOIN marcas m ON p.id_marca = m.id_marca
+  `);
+
+  return rows;
+}
+
 
   async actualizarProducto(id_producto, producto) {
     const { nombre, precio_venta, id_categoria, id_marca, estado } = producto;

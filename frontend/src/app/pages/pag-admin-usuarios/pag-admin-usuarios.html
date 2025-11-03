@@ -1,4 +1,11 @@
 <div class="mx-20">
+  <div class="flex items-center">
+    <h1 class="text-xl my-10">Gestión de productos</h1>
+    <button class="ml-auto text-sm  bg-[#0B1120] text-white px-4 py-2 font-semibold cursor-pointer rounded-lg">
+      Nuevo producto
+    </button>
+  </div>
+
   <div class="overflow-x-auto">
     <table class="w-full text-sm text-left border border-gray-300 rounded-lg border-separate border-spacing-0">
       <thead>
@@ -32,11 +39,3 @@
     </table>
   </div>
 </div>
-
-
-<!-- Modal -->
-<app-modal-usuario
-  *ngIf="modalAbierto"
-  (cerrar)="modalAbierto = false"
-  (usuarioCreado)="agregarUsuarioALista($event)"
-></app-modal-usuario>

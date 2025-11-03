@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { ProductosService, Producto } from '../../services/productosServices/productos-services';
 import { CommonModule } from '@angular/common';
-import { ModalProducto } from '../../components/modal-producto/modal-producto';
 
 @Component({
   selector: 'app-pag-admin-productos',
   standalone: true,
-  imports: [CommonModule, ModalProducto],
+  imports: [CommonModule],
   templateUrl: './pag-admin-productos.html',
   styles: ``,
 })
