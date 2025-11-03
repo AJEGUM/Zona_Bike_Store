@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 
-  // ✅ PANEL ADMIN (usa nav-bar-admin como layout)
+  // PANEL ADMIN (usa nav-bar-admin como layout)
   {
     path: 'admin',
     loadComponent: () =>
@@ -22,6 +22,18 @@ export const routes: Routes = [
             .then(m => m.PagAdminUsuarios)
       },
       {
+        path: 'promociones',
+        loadComponent: () =>
+          import('./pages/pag-admin-promociones/pag-admin-promociones')
+            .then(m => m.PagAdminPromociones)
+      },
+      {
+        path: 'reportes',
+        loadComponent: () =>
+          import('./pages/pag-admin-reportes/pag-admin-reportes')
+            .then(m => m.PagAdminReportes)
+      },
+      {
         path: '',
         redirectTo: 'productos',
         pathMatch: 'full'
@@ -29,7 +41,7 @@ export const routes: Routes = [
     ]
   },
 
-  // ✅ RUTAS PÚBLICAS (nav-bar normal)
+  // RUTAS PÚBLICAS (nav-bar normal)
   {
     path: '',
     loadComponent: () =>
