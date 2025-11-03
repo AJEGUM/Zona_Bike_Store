@@ -1,35 +1,45 @@
-<nav class="w-full bg-white shadow-sm">
-  <div class="max-w-7xl mx-auto px-4 py-8 flex items-center justify-between">
-    
-    <!-- Logo + Nombre -->
-    <div class="flex items-center space-x-2">
+<nav class="w-full bg-white shadow-sm fixed z-50 top-0">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <!-- LOGO -->
+    <div class="flex items-center space-x-2 flex-shrink-0">
       <img src="" class="w-7 h-7" alt="Logo">
-      <span class="text-3xl font-bold">Zona Bike Store</span>
+      <span class="text-2xl font-bold">Zona Bike Store</span>
     </div>
 
-    <!-- Barra de búsqueda -->
-    <div class="flex-1 mx-8">
-      <div class="relative">
+    <!-- BOTÓN HAMBURGUESA (solo móvil) -->
+    <button class="lg:hidden p-2 rounded-md border border-gray-300" (click)="abrirmenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" 
+           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- BÚSQUEDA ESCRITORIO -->
+    <div class="hidden lg:flex flex-1 justify-center px-10">
+      <div class="relative w-full max-w-xl">
         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-          <!-- Icono búsqueda -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.15-5.4a6.55 6.55 0 11-13.1 0 6.55 6.55 0 0113.1 0z" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M21 21l-4.35-4.35m1.15-5.4a6.55 6.55 0 11-13.1 0 6.55 6.55 0 0113.1 0z" />
           </svg>
         </span>
-        <input type="text" placeholder="Buscar productos..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"/>
+        <input type="text" placeholder="Buscar productos..."
+               class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700
+                      placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600"/>
       </div>
     </div>
 
-    <!-- Menú derecho -->
-    <div class="flex items-center space-x-6 text-sm">
-      <a href="#" class="text-gray-900 font-bold hover:text-gray-800">Ingresar</a>
-
-      <!-- Icono carrito -->
-      <button class="p-2 rounded-xl bg-white border hover:bg-gray-100 transition cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" 
-             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <!-- DERECHA DESKTOP -->
+    <div class="hidden lg:flex items-center space-x-6 text-sm">
+      <a href="#" class="text-gray-900 font-bold hover:text-gray-800">Iniciar sesión</a>
+      <button class="p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 transition cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
         </svg>
       </button>
     </div>
@@ -37,5 +47,39 @@
   </div>
 </nav>
 
-<router-outlet></router-outlet>
-<app-footer></app-footer>
+<!-- SIDEBAR MÓVIL -->
+<div *ngIf="menuOpen">
+  <!-- Fondo borroso -->
+  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" (click)="cerrarmenu()"></div>
+
+  <!-- Sidebar a la derecha -->
+  <div class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 flex flex-col justify-between transform transition-transform duration-300"
+       [class.translate-x-0]="menuOpen"
+       [class.translate-x-full]="!menuOpen">
+    
+    <!-- Botón cerrar -->
+    <button class="self-end p-2 rounded-md" (click)="cerrarmenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" 
+           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <!-- Menú -->
+    <div class="flex flex-col space-y-4 mt-6">
+      <a href="#" class="text-gray-900 font-semibold">Iniciar sesión</a>
+      <a href="#" class="text-gray-900 font-semibold">Productos</a>
+    </div>
+
+    <!-- Título del proyecto al final del sidebar -->
+    <div class="mt-auto text-gray-500 font-bold text-center pt-6 border-t border-gray-200">
+      Zona Bike Store
+    </div>
+  </div>
+</div>
+
+<!-- Contenido principal con padding para no ser tapado por navbar -->
+<div class="pt-16">
+  <router-outlet></router-outlet>
+  <app-footer></app-footer>
+</div>
