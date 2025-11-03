@@ -15,6 +15,8 @@ export class PagAdminProductos {
   categorias: any[] = [];
   marcas: any[] = [];
 
+  imagenBase64: string | null = null;
+
   modalAbierto = false;
   productoEditando: Producto | null = null;
 
@@ -39,8 +41,7 @@ export class PagAdminProductos {
     this.cargarMarcas();
   }
 
-  // ----------- Cargar datos -----------
-
+  // ✅ Cargar datos
   cargarProductos() {
     this.productosService.obtenerProductos().subscribe(data => this.productos = data);
   }
@@ -53,10 +54,10 @@ export class PagAdminProductos {
     this.productosService.obtenerMarcas().subscribe(data => this.marcas = data);
   }
 
-  // ----------- Modal -----------
-
+  // ✅ Modal
   abrirModalCrear() {
     this.productoEditando = null;
+    this.imagenBase64 = null;
 
     this.form = {
       id_producto: undefined,
@@ -66,9 +67,7 @@ export class PagAdminProductos {
       imagen: '',
       id_categoria: 0,
       id_marca: 0,
-      estado: 'activo',
-      categoria: undefined,
-      marca: undefined
+      estado: 'activo'
     };
 
     this.modalAbierto = true;
@@ -85,10 +84,10 @@ export class PagAdminProductos {
       imagen: p.imagen,
       estado: p.estado,
       id_categoria: p.categoria?.id_categoria!,
-      id_marca: p.marca?.id_marca!,
-      categoria: p.categoria,
-      marca: p.marca
+      id_marca: p.marca?.id_marca!
     };
+
+    this.imagenBase64 = p.imagen || null;
 
     this.modalAbierto = true;
   }
@@ -97,32 +96,37 @@ export class PagAdminProductos {
     this.modalAbierto = false;
   }
 
-  // ----------- Guardar / Actualizar -----------
-
+  // ✅ Crear o editar producto
   guardarProducto() {
 
-    const payload = {
-      nombre: this.form.nombre,
-      descripcion: this.form.descripcion,
-      precio_venta: this.form.precio_venta,
-      imagen: this.form.imagen,
-      id_categoria: this.form.id_categoria,
-      id_marca: this.form.id_marca,
-      estado: this.form.estado
-    };
+    // ✅ 1. Crear
+    if (!this.productoEditando) {
+      this.productosService.crearProducto(this.form).subscribe((nuevo: any) => {
 
-    if (this.productoEditando) {
+        const id = nuevo.id_producto;
 
-      this.productosService.actualizarProducto(this.productoEditando.id_producto!, payload)
-        .subscribe(() => {
-          this.cargarProductos();
-          this.cerrarModal();
-        });
+        if (this.imagenBase64) {
+          this.productosService
+            .subirImagenBase64(id, this.imagenBase64)
+            .subscribe(() => this.cargarProductos());
+        }
+
+        this.cargarProductos();
+        this.cerrarModal();
+      });
 
     } else {
-
-      this.productosService.crearProducto(payload)
+      // ✅ 2. Editar
+      this.productosService
+        .actualizarProducto(this.productoEditando.id_producto!, this.form)
         .subscribe(() => {
+
+          if (this.imagenBase64) {
+            this.productosService
+              .subirImagenBase64(this.productoEditando!.id_producto!, this.imagenBase64)
+              .subscribe(() => this.cargarProductos());
+          }
+
           this.cargarProductos();
           this.cerrarModal();
         });
@@ -142,4 +146,15 @@ export class PagAdminProductos {
     return cat?.nombre;
   }
 
+  // ✅ Convertir a Base64
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenBase64 = (reader.result as string).split(',')[1];
+    };
+    reader.readAsDataURL(file);
+  }
 }

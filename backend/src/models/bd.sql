@@ -94,7 +94,7 @@ CREATE TABLE productos (
     nombre VARCHAR(255) NOT NULL,
     precio_venta DECIMAL(10,2) CHECK (precio_venta >= 0),
     descripcion VARCHAR(500),
-    imagen VARCHAR(500),
+    imagen LONGTEXT,
     estado ENUM('activo', 'inactivo') default 'activo',
     id_categoria INT,
     id_marca INT,

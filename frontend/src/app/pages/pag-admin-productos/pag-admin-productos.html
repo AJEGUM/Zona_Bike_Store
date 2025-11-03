@@ -64,11 +64,14 @@
       <!-- PREVIEW DEL PRODUCTO -->
       <div class="rounded-xl border shadow-sm p-4 bg-white">
 
-        <div class="rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
-          <img *ngIf="form.imagen"
-               [src]="form.imagen"
+        <div class="rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center h-72">
+          <img *ngIf="imagenBase64 || form.imagen"
+               [src]="imagenBase64 ? ('data:image/jpeg;base64,' + imagenBase64) : form.imagen"
                class="w-full h-full object-cover" />
-          <span *ngIf="!form.imagen" class="text-gray-400">Sin imagen</span>
+
+          <span *ngIf="!form.imagen && !imagenBase64" class="text-gray-400 text-sm">
+            Vista previa
+          </span>
         </div>
 
         <div class="mt-4 text-sm text-gray-500">
@@ -83,18 +86,8 @@
           <p class="font-semibold text-gray-900 text-lg">
             {{ form.precio_venta ? ('$' + form.precio_venta) : 'Precio' }}
           </p>
-
-          <span class="text-gray-500 text-sm">
-            Stock: {{ 0 }}
-          </span>
+          <span class="text-gray-500 text-sm">Stock: 0</span>
         </div>
-
-        <button class="w-full mt-4 bg-[#0B1120] text-white py-2 rounded-lg flex items-center justify-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="#fff" viewBox="0 0 24 24">
-            <path d="M10 20.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm7 0a1.5 1.5 0 1 1 .001-3A1.5 1.5 0 0 1 17 20.5ZM6.2 5l2.1 9h8.9l2.1-9H6.2ZM4 3h16l-3 13H8L4 3Z"/>
-          </svg>
-          Añadir al carrito
-        </button>
 
       </div>
 
@@ -117,10 +110,16 @@
 
         <!-- Imagen -->
         <div>
-          <label class="block font-medium">Imagen (URL)</label>
-          <input type="text" [(ngModel)]="form.imagen" name="imagen"
-                 placeholder="https://..."
-                 class="w-full border rounded-lg px-3 py-2" />
+          <label class="block font-medium">Imagen (Archivo)</label>
+
+          <input type="file"
+                 accept="image/*"
+                 (change)="onFileSelected($event)"
+                 class="w-full border rounded-lg px-3 py-2">
+
+          <small class="text-gray-500">
+            Si editas y no seleccionas una imagen nueva, se mantendrá la actual.
+          </small>
         </div>
 
         <!-- Precio -->

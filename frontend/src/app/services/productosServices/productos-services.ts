@@ -1,19 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface Producto {
   id_producto?: number;
-
   nombre: string;
   descripcion: string;
   precio_venta: number;
   imagen: string;
-
   id_categoria: number;
   id_marca: number;
-
   estado?: string;
 
   categoria?: {
@@ -26,7 +23,6 @@ export interface Producto {
     nombre: string;
   };
 }
-
 
 @Injectable({
   providedIn: 'root',
@@ -61,4 +57,9 @@ export class ProductosService {
     return this.http.get<any[]>(`${this.apiUrl}/marcas`);
   }
 
+  subirImagenBase64(id: number, base64: string) {
+    return this.http.post(`${environment.apiUrl}/imagenes/guardar/productos/id_producto/${id}`, {
+      imagen: base64
+    });
+  }
 }

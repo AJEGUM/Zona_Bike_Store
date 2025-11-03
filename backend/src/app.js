@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 
 // Rutas
 app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/imagenes', require('./routes/imagen.routes'));
 app.use('/api/permisos', require('./routes/permisos.routes'));
 app.use('/api/productos', require('./routes/productos.routes'));
 app.use('/api/rol-permiso', require('./routes/roles_permisos.routes'));
