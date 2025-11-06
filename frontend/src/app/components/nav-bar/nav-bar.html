@@ -1,3 +1,10 @@
+<div
+  *ngIf="toastVisible"
+  class="fixed top-4 right-4 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in z-[9999]"
+>
+  {{ toastMessage }}
+</div>
+
 <!-- NAVBAR -->
 <nav class="w-full bg-white shadow-sm fixed z-50 top-0">
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -11,46 +18,53 @@
     <div class="flex-1 px-2">
       <div class="relative w-full max-w-xl mx-auto">
         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M21 21l-4.35-4.35m1.15-5.4a6.55 6.55 0 11-13.1 0 6.55 6.55 0 0113.1 0z" />
+              d="M21 21l-4.35-4.35m1.15-5.4a6.55 6.55 0 11-13.1 0 6.55 6.55 0 0113.1 0z" />
           </svg>
         </span>
-        <input type="text" placeholder="Buscar productos..."
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearchChange()"
-              class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700
-                     placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600"/>
+        <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+          class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-100 text-gray-700
+                     placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600" />
       </div>
     </div>
 
+    <!-- CARRITO (solo móvil) -->
+    <button class="lg:hidden p-2 rounded-md border border-gray-300 mr-2" (click)="abrirCarrito()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
+      </svg>
+    </button>
+
+
     <!-- BOTÓN HAMBURGUESA (solo móvil) -->
     <button class="lg:hidden p-2 rounded-md border border-gray-300 ml-2" (click)="abrirmenu()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" 
-           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M4 6h16M4 12h16M4 18h16" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
 
     <!-- DERECHA DESKTOP -->
     <div class="hidden lg:flex items-center space-x-6 text-sm">
-      <button 
-        class="flex items-center gap-2 text-gray-900 font-bold hover:bg-gray-100 px-3 py-2 rounded-lg transition"
-        (click)="abrirModal()"
-      >
+      <button class="flex items-center gap-2 text-gray-900 font-bold hover:bg-gray-100 px-3 py-2 rounded-lg transition"
+        (click)="abrirModal()">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
-          <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Z"/>
+          <path
+            d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Z" />
         </svg>
         Iniciar sesión
       </button>
 
-      <button class="p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 transition cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <button (click)="abrirCarrito()"
+        class="p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 transition cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
         </svg>
       </button>
     </div>
@@ -60,15 +74,15 @@
 <!-- SIDEBAR MÓVIL -->
 <div *ngIf="menuOpen">
   <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" (click)="cerrarmenu()"></div>
-  <div class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 flex flex-col transform transition-transform duration-300"
-       [class.translate-x-0]="menuOpen"
-       [class.translate-x-full]="!menuOpen">
+  <div
+    class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 p-6 flex flex-col transform transition-transform duration-300"
+    [class.translate-x-0]="menuOpen" [class.translate-x-full]="!menuOpen">
 
     <!-- Botón cerrar -->
     <button class="self-end p-2 rounded-md" (click)="cerrarmenu()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" 
-           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
 
@@ -81,12 +95,12 @@
 
       <!-- BOTÓN ABAJO -->
       <div class="mt-auto mb-4">
-        <button 
+        <button
           class="w-full flex items-center justify-center gap-2 text-gray-900 font-bold hover:bg-gray-100 px-3 py-2 rounded-lg transition"
-          (click)="abrirModalDesdeMenu()"
-        >
+          (click)="abrirModalDesdeMenu()">
           <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#000000">
-            <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Z"/>
+            <path
+              d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Z" />
           </svg>
           Iniciar sesión
         </button>
@@ -103,9 +117,10 @@
 <!-- MODAL INICIO/REGISTRO -->
 <div *ngIf="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
   <div class="bg-white rounded-xl w-full max-w-md p-6 mt-6 mx-4 sm:mx-0 sm:mt-0 relative shadow-lg">
-    
+
     <!-- Botón cerrar -->
-    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl leading-none" (click)="cerrarModal()">
+    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl leading-none"
+      (click)="cerrarModal()">
       &times;
     </button>
 
@@ -117,18 +132,12 @@
 
     <!-- Tabs -->
     <div class="flex justify-center bg-gray-100 rounded-full mb-6 p-1">
-      <button
-        (click)="isLogin = true"
-        [ngClass]="isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
-        class="flex-1 py-2 rounded-full font-medium transition"
-      >
+      <button (click)="isLogin = true" [ngClass]="isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
+        class="flex-1 py-2 rounded-full font-medium transition">
         Iniciar Sesión
       </button>
-      <button
-        (click)="isLogin = false"
-        [ngClass]="!isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
-        class="flex-1 py-2 rounded-full font-medium transition"
-      >
+      <button (click)="isLogin = false" [ngClass]="!isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
+        class="flex-1 py-2 rounded-full font-medium transition">
         Registrarse
       </button>
     </div>
@@ -137,34 +146,32 @@
     <form (ngSubmit)="isLogin ? login() : register()" class="space-y-4">
       <!-- Icono -->
       <div class="flex items-center justify-center text-gray-600 mb-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.784.607 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.784.607 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
         <span class="text-sm">{{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}</span>
       </div>
 
       <!-- Campos -->
       <div *ngIf="!isLogin">
-        <input type="text" placeholder="Tu nombre"
-               [(ngModel)]="nombre" name="nombre"
-               class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400"/>
+        <input type="text" placeholder="Tu nombre" [(ngModel)]="nombre" name="nombre"
+          class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
       </div>
 
       <div>
-        <input type="email" placeholder="tu@email.com"
-               [(ngModel)]="email" name="email"
-               class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400"/>
+        <input type="email" placeholder="tu@email.com" [(ngModel)]="email" name="email"
+          class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
       </div>
 
       <div>
-        <input type="password" placeholder="Contraseña"
-               [(ngModel)]="password" name="password"
-               class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400"/>
+        <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password"
+          class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
       </div>
 
       <button type="submit"
-              class="w-full bg-[#030213] text-white py-2 rounded-lg hover:bg-gray-900 transition font-medium">
+        class="w-full bg-[#030213] text-white py-2 rounded-lg hover:bg-gray-900 transition font-medium">
         {{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}
       </button>
     </form>
@@ -178,6 +185,183 @@
     </p>
   </div>
 </div>
+
+<!-- 🛒 MODAL CARRITO (Responsive: móvil + escritorio) -->
+<div
+  *ngIf="carritoOpen"
+  class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-2"
+>
+  <div
+    class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl animate-fade-in transition-all duration-300
+           flex flex-col max-h-[90vh] overflow-hidden"
+  >
+    <!-- Header -->
+    <div
+      class="flex justify-between items-center px-5 py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0"
+    >
+      <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 text-gray-800"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2z"
+          />
+        </svg>
+        Tu carrito
+      </h2>
+      <button
+        (click)="cerrarCarrito()"
+        class="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+      >
+        &times;
+      </button>
+    </div>
+
+    <!-- Contenido scrollable -->
+    <div class="p-4 overflow-y-auto flex-1">
+      <div *ngIf="carrito.length > 0; else vacio">
+        <div
+          *ngFor="let item of carrito"
+          class="flex items-center justify-between gap-3 border-b border-gray-200 pb-3 mb-3"
+        >
+          <!-- Imagen del producto -->
+          <div class="flex-shrink-0">
+            <img
+              [src]="obtenerImagen(item)"
+              alt="{{ item.nombre }}"
+              class="w-26 h-26 object-cover rounded-lg border border-gray-200"
+            />
+          </div>
+
+          <!-- Detalles -->
+          <div class="flex-1">
+            <p class="font-medium text-gray-900 truncate">
+              {{ item.nombre }}
+            </p>
+            <p class="text-sm text-gray-600">
+              Precio unitario: {{ item.precio_venta_formateado }}
+            </p>
+
+            <!-- Control de cantidad -->
+            <div class="flex items-center gap-2 mt-2">
+              <button
+                class="p-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition disabled:opacity-40"
+                (click)="actualizarCantidad(item.id_producto, item.cantidad - 1)"
+                [disabled]="item.cantidad <= 1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+                </svg>
+              </button>
+
+              <input
+                type="number"
+                min="1"
+                class="w-14 text-center border rounded-lg py-1 text-gray-700"
+                [value]="item.cantidad"
+                (change)="actualizarCantidad(item.id_producto, +$event.target.value)"
+              />
+
+              <button
+                class="p-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+                (click)="actualizarCantidad(item.id_producto, item.cantidad + 1)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subtotal y eliminar -->
+          <div class="text-right">
+            <button
+              (click)="eliminarDelCarrito(item.id_producto)"
+              class="mt-2 text-red-500 hover:text-red-700 transition"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #vacio>
+        <div class="flex flex-col items-center justify-center py-10 text-gray-600">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-16 h-16 mb-3 opacity-70"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2z"
+            />
+          </svg>
+          <p class="text-lg font-medium">Tu carrito está vacío</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Footer fijo -->
+    <div class="border-t border-gray-200 p-5 bg-gray-50 flex-shrink-0">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-lg font-medium text-gray-700">Total:</span>
+        <span class="text-2xl font-bold text-gray-900">{{ totalFormateado }}</span>
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          (click)="vaciarCarrito()"
+          class="flex-1 border border-gray-300 rounded-lg py-2 hover:bg-gray-100 font-medium text-gray-700 transition"
+        >
+          Vaciar carrito
+        </button>
+        <button
+          class="flex-1 bg-[#030213] text-white py-2 rounded-lg hover:bg-gray-900 font-medium transition"
+        >
+          Proceder al pago
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <!-- CONTENIDO PRINCIPAL -->
 <div class="pt-10">

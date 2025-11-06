@@ -8,6 +8,7 @@ class ServicesProductos {
         p.id_producto,
         p.nombre,
         p.precio_venta,
+        CONCAT('$', FORMAT(p.precio_venta, 0, 'es_CO')) AS precio_venta_formateado,
         p.descripcion,
         p.imagen,
         p.estado,
@@ -29,6 +30,7 @@ class ServicesProductos {
 
     return rows;
   }
+
 
   async crearProducto(producto) {
     const { nombre, precio_venta, id_categoria, id_marca, estado = 'activo', descripcion = '', imagen = '' } = producto;

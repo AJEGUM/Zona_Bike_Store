@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-nav-bar-admin',
   standalone: true,
-  imports: [RouterModule, Footer, CommonModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './nav-bar-admin.html',
   styles: ``,
 })

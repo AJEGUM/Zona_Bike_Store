@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductosService } from '../../services/productosServices/productos-services';
 import { NavBar } from '../../components/nav-bar/nav-bar';
+import { Carrito } from '../../services/carrito/carrito';
 
 @Component({
   selector: 'app-pag-principal',
@@ -12,16 +13,24 @@ import { NavBar } from '../../components/nav-bar/nav-bar';
 export class PagPrincipal implements OnInit {
 
   productos: any[] = [];
-  productosFiltrados: any[] = [];
+  productosFiltrados: any[] = []; 
+  mensajeToast: string | null = null;
 
-  constructor(private productosService: ProductosService) {}
+
+  constructor(
+    private productosService: ProductosService,
+    private carritoService: Carrito
+  ) {}
 
   ngOnInit() {
-    // Usamos subscribe porque obtenerProductos devuelve un Observable
+    this.cargarProductos();
+  }
+
+  cargarProductos() {
     this.productosService.obtenerProductos().subscribe({
       next: (data: any[]) => {
         this.productos = data;
-        this.productosFiltrados = data; // Inicialmente todos los productos
+        this.productosFiltrados = data;
         console.log("Productos cargados:", this.productos);
       },
       error: (err) => console.error("Error al cargar productos:", err)
@@ -30,13 +39,9 @@ export class PagPrincipal implements OnInit {
 
   obtenerImagen(prod: any) {
     if (!prod.imagen) return 'assets/no-image.png';
-
-    // Si viene base64 crudo
     if (!prod.imagen.startsWith('data:image')) {
       return 'data:image/jpeg;base64,' + prod.imagen;
     }
-
-    // Si ya viene completo
     return prod.imagen;
   }
 
@@ -50,4 +55,14 @@ export class PagPrincipal implements OnInit {
       p.nombre.toLowerCase().includes(lowerTerm)
     );
   }
+
+agregarAlCarrito(producto: any) {
+  this.carritoService.agregarProducto(producto);
+  this.mensajeToast = null;
+  setTimeout(() => {
+    this.mensajeToast = '✅ Producto agregado al carrito';
+  }, 0);
+}
+
+
 }

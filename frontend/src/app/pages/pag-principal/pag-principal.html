@@ -1,4 +1,4 @@
-<app-nav-bar (searchChanged)="filtrarProductos($event)"></app-nav-bar>
+<app-nav-bar (searchChanged)="filtrarProductos($event)"  [mensajeExterno]="mensajeToast" ></app-nav-bar>
 <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-15">
 
     <h2 class="text-2xl font-semibold mb-8">Nuestro Catálogo</h2>
@@ -40,7 +40,7 @@
                 </h3>
 
                 <p class="text-gray-900 text-lg mt-2 font-bold">
-                    ${{ p.precio_venta }} COP
+                    {{ p.precio_venta_formateado  }} COP
                 </p>
 
                 <p class="text-sm text-gray-600 mt-1">
@@ -49,14 +49,8 @@
 
                 <!-- BOTÓN O PRODUCTO NO DISPONIBLE -->
                 <div class="mt-4">
-                    <button *ngIf="p.estado === 'activo'"
-                        class="w-full bg-[#0B1120] text-white py-2 rounded-lg hover:bg-[#16213a] transition flex items-center justify-center gap-2">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="#fff" viewBox="0 0 24 24">
-                            <path
-                                d="M10 20.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm7 0a1.5 1.5 0 1 1 .001-3A1.5 1.5 0 0 1 17 20.5ZM6.2 5l2.1 9h8.9l2.1-9H6.2ZM4 3h16l-3 13H8L4 3Z" />
-                        </svg>
-                        Añadir al carrito
+                    <button (click)="agregarAlCarrito(p)" class="bg-[#030213] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full">
+                        Agregar al carrito 🛒
                     </button>
 
                     <div *ngIf="p.estado === 'inactivo'"
