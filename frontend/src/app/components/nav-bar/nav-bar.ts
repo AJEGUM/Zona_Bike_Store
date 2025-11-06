@@ -29,7 +29,7 @@ export class NavBar implements OnChanges {
   @Input() mensajeExterno: string | null = null;
   @Output() searchChanged = new EventEmitter<string>();
 
-  constructor(private carritoService: Carrito) {
+  constructor(public carritoService: Carrito) {
     this.carritoService.carrito$.subscribe(items => {
       this.carrito = items;
       this.totalFormateado = this.carritoService.obtenerTotalFormateado();
@@ -105,6 +105,7 @@ export class NavBar implements OnChanges {
       this.totalFormateado = this.carritoService.obtenerTotalFormateado();
     }
   }
+
 
   vaciarCarrito() {
     this.carritoService.vaciarCarrito();

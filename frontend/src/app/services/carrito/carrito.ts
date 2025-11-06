@@ -13,13 +13,14 @@ export class Carrito {
     const existente = carritoActual.find(p => p.id_producto === producto.id_producto);
 
     if (existente) {
-      existente.cantidad += 1;
+      existente.cantidad += producto.cantidad;
     } else {
-      carritoActual.push({ ...producto, cantidad: 1 });
+      carritoActual.push({ ...producto });
     }
 
     this.carrito.next([...carritoActual]);
   }
+
 
   eliminarProducto(id_producto: number) {
     const actualizado = this.carrito.value.filter(p => p.id_producto !== id_producto);
@@ -55,9 +56,13 @@ export class Carrito {
   }
 
   actualizarCantidad(id_producto: number, nuevaCantidad: number) {
-    const carritoActual = this.carrito.value.map(p =>
-      p.id_producto === id_producto ? { ...p, cantidad: nuevaCantidad } : p
+    const actual = this.carrito.value.map(p =>
+      p.id_producto === id_producto
+        ? { ...p, cantidad: nuevaCantidad, subtotal: p.precio_venta * nuevaCantidad }
+        : p
     );
-    this.carrito.next(carritoActual);
+
+    this.carrito.next(actual);
+    localStorage.setItem('carrito', JSON.stringify(actual));
   }
 }

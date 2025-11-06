@@ -246,7 +246,7 @@
               {{ item.nombre }}
             </p>
             <p class="text-sm text-gray-600">
-              Precio unitario: {{ item.precio_venta_formateado }}
+              Precio unitario: {{ item.precio_venta_formateado || (carritoService.formatearPrecio(item.precio_venta)) }}
             </p>
 
             <!-- Control de cantidad -->
