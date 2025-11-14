@@ -29,8 +29,9 @@
         <tr *ngFor="let promo of promociones" class="hover:bg-gray-50 transition">
           <td class="px-4 py-3">{{ promo.titulo }}</td>
           <td class="px-4 py-3">{{ promo.descripcion }}</td>
-          <td class="px-4 py-3">{{ promo.fecha_inicio }}</td>
-          <td class="px-4 py-3">{{ promo.fecha_fin }}</td>
+          <td class="px-4 py-3">{{ promo.fecha_inicio | date:'dd-MM-yyyy' }}</td>
+          <td class="px-4 py-3">{{ promo.fecha_fin | date:'dd-MM-yyyy' }}</td>
+
 
           <td class="px-4 py-3">
             <span class="px-2 py-1 rounded-md text-xs font-semibold"
