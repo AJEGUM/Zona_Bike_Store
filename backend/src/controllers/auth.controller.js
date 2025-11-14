@@ -3,58 +3,64 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 class AuthController {
-  async login(req, res) {
-    const { email, password } = req.body;
+async login(req, res) {
+  try {
+    console.log("📥 Datos recibidos en backend:", req.body);
 
-    try {
-      // Buscar usuario por email
-      const [usuarios] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+    const { email, clave } = req.body;
 
-      if (usuarios.length === 0) {
-        return res.status(401).json({ error: 'Usuario no encontrado' });
-      }
-
-      const usuario = usuarios[0];
-
-      // Verificar contraseña con bcrypt
-      const esValida = await bcrypt.compare(password, usuario.clave);
-      if (!esValida) {
-        return res.status(401).json({ error: 'Contraseña incorrecta' });
-      }
-
-      // Obtener rol y permisos del usuario
-      const [rolDatos] = await db.query(
-        `SELECT r.nombre AS rol, p.nombre AS permiso
-         FROM roles r
-         JOIN rol_permiso rp ON r.id_rol = rp.id_rol
-         JOIN permisos p ON rp.permiso_id = p.id_permiso
-         WHERE r.id_rol = ?`,
-        [usuario.id_rol]
-      );
-
-      // Generar JWT
-      const token = jwt.sign(
-        { id: usuario.id_usuario, rol: usuario.id_rol },
-        'secreto_super_seguro',
-        { expiresIn: '8h' }
-      );
-
-      res.json({
-        mensaje: 'Inicio de sesión exitoso',
-        token,
-        usuario: {
-          id: usuario.id_usuario,
-          nombre: usuario.nombre,
-          email: usuario.email,
-          rol: rolDatos[0]?.rol || 'Sin rol',
-          permisos: rolDatos.map(p => p.permiso)
-        }
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error en el servidor' });
+    if (!email || !clave) {
+      return res.status(400).json({ message: "Faltan datos" });
     }
+
+    const [rows] = await db.query(
+      `SELECT u.*, r.nombre AS rol_nombre
+      FROM usuarios u
+      JOIN roles r ON u.id_rol = r.id_rol
+      WHERE u.email = ?`,
+      [email]
+    );
+
+    const usuario = rows[0];
+
+    if (!usuario) {
+      console.log("❌ Usuario no existe");
+      return res.status(401).json({ message: "Usuario no encontrado" });
+    }
+
+    console.log("🔎 Hash en BD:", usuario.clave);
+
+    if (!usuario.clave) {
+      console.log("❌ ERROR: usuario.clave está vacío en la BD");
+      return res.status(500).json({ message: "Hash inválido en BD" });
+    }
+
+    const esCorrecta = await bcrypt.compare(clave, usuario.clave);
+
+    console.log("🔐 Resultado bcrypt:", esCorrecta);
+
+    if (!esCorrecta) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: usuario.id_usuario,
+        nombre: usuario.nombre,
+        rol: usuario.rol_nombre
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.json({ token });
+
+  } catch (error) {
+    console.error("💥 ERROR LOGIN:", error);
+    return res.status(500).json({ message: "Error interno" });
   }
+}
+
 }
 
 module.exports = new AuthController();

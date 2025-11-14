@@ -106,3 +106,15 @@ CREATE TABLE detalle_ventas (
     FOREIGN KEY (id_venta) REFERENCES ventas(id_venta) ON DELETE CASCADE,
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 );
+
+CREATE TABLE promociones (
+    id_promocion INT NOT NULL AUTO_INCREMENT primary key,
+    titulo VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    imagen LONGTEXT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    estado ENUM('activa', 'inactiva') DEFAULT 'activa',
+    id_usuario INT,
+    foreign key (id_usuario) references usuarios(id_usuario)
+);

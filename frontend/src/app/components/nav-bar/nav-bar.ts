@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Carrito } from '../../services/carrito/carrito';
+import { UsuariosService } from '../../services/usuarios/usuarios';
+import { AuthService } from '../../services/AuthService/auth-service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -24,12 +26,12 @@ export class NavBar implements OnChanges {
   isLogin = true;
   nombre = '';
   email = '';
-  password = '';
+  clave = '';
 
   @Input() mensajeExterno: string | null = null;
   @Output() searchChanged = new EventEmitter<string>();
 
-  constructor(public carritoService: Carrito) {
+  constructor(public carritoService: Carrito, private usuarioServices: UsuariosService, private AuthService: AuthService, private router: Router) {
     this.carritoService.carrito$.subscribe(items => {
       this.carrito = items;
       this.totalFormateado = this.carritoService.obtenerTotalFormateado();
@@ -61,27 +63,70 @@ export class NavBar implements OnChanges {
   cerrarModal() {
     this.modalOpen = false;
     this.isLogin = true;
-    this.nombre = this.email = this.password = '';
+    this.nombre = this.email = this.clave = '';
   }
 
   toggleForm() {
     this.isLogin = !this.isLogin;
-    this.nombre = this.email = this.password = '';
+    this.nombre = this.email = this.clave = '';
   }
 
-  login() {
-    if (this.email && this.password) {
-      console.log('Login:', { email: this.email, password: this.password });
+login() {
+  if (!this.email || !this.clave) return;
+  console.log("📤 Enviando al backend:", this.email, this.clave);
+
+  this.AuthService.iniciarSesion(this.email, this.clave).subscribe({
+    next: (resp: any) => {
+ console.log("🔥 Entró al next");
+  console.log("🟢 Token recibido:", resp.token);
+
+  // Forzar guardado
+  localStorage.setItem('token', resp.token);
+
+  console.log("📦 Token guardado en localStorage:", localStorage.getItem('token'));
+      this.AuthService.guardarToken(resp.token);
+
+      const rol = JSON.parse(atob(resp.token.split('.')[1])).rol;
+      console.log("ROL DESDE TOKEN DIRECTO:", rol);
+console.log(">>> NAVEGANDO A ADMIN...");
+
+      if (rol === "Administrador") {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/']);
+      }
+
+      this.mostrarAlerta('Inicio de sesión exitoso');
       this.cerrarModal();
+    },
+    error: () => {
+      this.mostrarAlerta('Credenciales incorrectas');
     }
-  }
+  });
+}
 
   register() {
-    if (this.nombre && this.email && this.password) {
-      console.log('Registro:', { nombre: this.nombre, email: this.email, password: this.password });
-      this.cerrarModal();
+      if (!this.nombre || !this.email || !this.clave) return;
+
+      const payload = {
+        nombre: this.nombre,
+        email: this.email,
+        clave: this.clave,
+        id_rol: 2
+      };
+
+      this.usuarioServices.crearUsuario(payload).subscribe({
+        next: (resp: any) => {
+          console.log('Usuario registrado:', resp);
+          this.mostrarAlerta('Usuario registrado correctamente');
+          this.cerrarModal();
+        },
+        error: (err) => {
+          console.error(err);
+          this.mostrarAlerta('Error al registrar');
+        }
+      });
     }
-  }
 
   abrirCarrito() {
     this.carritoOpen = true;

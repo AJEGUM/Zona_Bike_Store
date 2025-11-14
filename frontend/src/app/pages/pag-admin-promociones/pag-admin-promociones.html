@@ -4,3 +4,70 @@
         <button class="ml-auto text-sm bg-[#0B1120] text-white px-4 py-2 font-semibold cursor-pointer rounded-lg flex items-center gap-2 hover:bg-[#141c33] transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 -960 960 960" fill="#e3e3e3"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>Nueva promoción</button>
     </div>
 </div>
+
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- FORMULARIO -->
+  <div class="bg-white p-6 rounded shadow mb-6">
+    <h2 class="text-xl font-bold mb-4">Nueva Promoción</h2>
+
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <input type="text" placeholder="Título" class="border p-2 rounded"
+             [(ngModel)]="form.titulo">
+
+      <input type="date" class="border p-2 rounded"
+             [(ngModel)]="form.fecha_inicio">
+
+      <input type="date" class="border p-2 rounded"
+             [(ngModel)]="form.fecha_fin">
+
+      <select class="border p-2 rounded" [(ngModel)]="form.estado">
+        <option value="activa">Activa</option>
+        <option value="inactiva">Inactiva</option>
+      </select>
+    </div>
+
+    <textarea class="border p-2 rounded w-full mb-4"
+              placeholder="Descripción"
+              [(ngModel)]="form.descripcion"></textarea>
+
+    <input type="file" (change)="previewImg($event)" class="mb-4">
+
+    <!-- PREVIEW IMAGEN HORIZONTAL -->
+    <div *ngIf="imagenBase64" class="w-full h-48 bg-gray-200 rounded overflow-hidden">
+      <img [src]="imagenBase64" class="w-full h-full object-cover">
+    </div>
+
+    <button (click)="guardar()"
+            class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+      Guardar
+    </button>
+  </div>
+
+  <!-- TABLA -->
+  <table class="w-full bg-white shadow rounded overflow-hidden text-center">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-3">ID</th>
+        <th class="p-3">Banner</th>
+        <th class="p-3">Título</th>
+        <th class="p-3">Estado</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let p of promociones" class="border-t">
+        <td class="p-3">{{ p.id_promocion }}</td>
+
+        <td class="p-3">
+          <img *ngIf="p.imagen"
+               [src]="p.imagen"
+               class="w-40 h-20 object-cover rounded shadow">
+        </td>
+
+        <td class="p-3">{{ p.titulo }}</td>
+        <td class="p-3">{{ p.estado }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

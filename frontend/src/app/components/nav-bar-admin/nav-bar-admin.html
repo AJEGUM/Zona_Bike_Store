@@ -1,3 +1,32 @@
+<nav class="flex items-center justify-between px-6 py-3 bg-transparent mt-3 select-none">
+
+  <!-- Logo -->
+  <div class="flex items-center gap-2 cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm14-9h-5l-2-3H8v2h3l2 3h6l3 4v3h-2v-2l-3-4Zm-3 9a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
+    </svg>
+    <span class="font-semibold text-gray-800">Zona Bike Store</span>
+  </div>
+
+  <!-- Botones -->
+  <div class="flex items-center gap-3">
+
+    <!-- Botón Admin -->
+    <a
+      routerLinkActive="text-gray-900 font-semibold"
+      class="px-4 py-1 rounded-full text-sm hover:bg-gray-100 transition"
+    >
+      {{ nombre }} ({{ rol }})
+    </a>
+
+    <!-- Botón Salir -->
+    <button (click)="logout()"
+      class="px-4 py-1 bg-white border rounded-full text-sm shadow-sm hover:bg-gray-100 transition">
+      Salir
+    </button>
+  </div>
+</nav>
+
 <div class="mx-20 relative">
   <!-- 🧭 Barra de navegación -->
   <nav class="bg-gray-100 rounded-full shadow-sm mt-4 max-w-[1200px]">

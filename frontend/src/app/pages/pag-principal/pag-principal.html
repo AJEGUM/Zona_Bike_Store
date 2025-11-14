@@ -62,37 +62,56 @@
 </div>
 
 <!-- MODAL -->
-<div *ngIf="modalAbierto" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full overflow-hidden relative animate-fade-in">
-    
-    <button (click)="cerrarModalProducto()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
+<!-- MODAL MEJORADO -->
+<div *ngIf="modalAbierto" 
+     class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  
+  <!-- Fondo clickeable para cerrar -->
+  <div class="absolute inset-0" (click)="cerrarModalProducto()"></div>
 
-    <div class="grid md:grid-cols-2">
+  <!-- Contenedor del modal -->
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-fade-in z-10 flex flex-col">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-center px-6 py-4 border-b">
+      <h2 class="text-xl font-semibold text-gray-800 truncate">
+        {{ modalProducto.nombre }}
+      </h2>
+      <button (click)="cerrarModalProducto()"
+              class="text-gray-400 hover:text-gray-700 text-2xl leading-none transition">
+        &times;
+      </button>
+    </div>
+
+    <!-- Contenido con scroll interno -->
+    <div class="grid md:grid-cols-2 gap-0 flex-1 overflow-y-auto">
+      
       <!-- Imagen -->
       <div class="bg-gray-100 flex items-center justify-center p-6">
         <img [src]="obtenerImagen(modalProducto)" [alt]="modalProducto.nombre"
-             class="w-full max-h-[480px] object-contain rounded-xl" />
+             class="w-full max-h-[450px] object-contain rounded-xl" />
       </div>
 
-      <!-- Info -->
-      <div class="p-8 flex flex-col justify-between">
+      <!-- Información -->
+      <div class="p-6 flex flex-col justify-between">
         <div>
           <p class="text-sm text-gray-500 mb-1">{{ modalProducto.categoria?.nombre }}</p>
-          <h2 class="text-2xl font-semibold text-gray-900 mb-2">{{ modalProducto.nombre }}</h2>
-
-          <span *ngIf="modalProducto.estado === 'activo'" 
-                class="inline-block bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded mb-4">
-            Disponible
-          </span>
-          <span *ngIf="modalProducto.estado !== 'activo'" 
-                class="inline-block bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded mb-4">
-            No disponible
-          </span>
+          
+          <div class="flex items-center gap-2 mb-3">
+            <span *ngIf="modalProducto.estado === 'activo'" 
+                  class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">
+              Disponible
+            </span>
+            <span *ngIf="modalProducto.estado !== 'activo'" 
+                  class="bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded">
+              No disponible
+            </span>
+          </div>
 
           <p class="text-3xl font-bold text-gray-900 mb-4">{{ modalProducto.precio_venta_formateado }} COP</p>
 
           <h3 class="text-base font-semibold text-gray-800 mb-2">Descripción</h3>
-          <p class="text-gray-600 leading-relaxed mb-6">{{ modalProducto.descripcion }}</p>
+          <p class="text-gray-600 leading-relaxed mb-6 whitespace-pre-line">{{ modalProducto.descripcion }}</p>
 
           <div class="border-t pt-4 space-y-2 text-sm text-gray-700">
             <p>Stock disponible: <span class="font-medium">{{ modalProducto.stock || 0 }} unidades</span></p>
@@ -106,7 +125,7 @@
             <span class="text-sm text-gray-700 font-medium">Cantidad</span>
             <div class="flex items-center border rounded-lg">
               <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
-                <input type="number"
+              <input type="number"
                     [(ngModel)]="cantidad"
                     min="1"
                     class="w-12 text-center text-gray-800 border-x outline-none"
@@ -115,28 +134,19 @@
             </div>
           </div>
 
-          <!-- Solo aparece si el producto está activo -->
           <button *ngIf="modalProducto.estado === 'activo'" 
-                    (click)="agregarAlCarrito(modalProducto, cantidad); cerrarModalProducto()"
+                  (click)="agregarAlCarrito(modalProducto, cantidad); cerrarModalProducto()"
                   class="w-full bg-[#030213] text-white py-3 rounded-lg hover:bg-gray-900 font-medium flex items-center justify-center gap-2 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2z" />
-            </svg>
-            Añadir al carrito
+            🛒 Añadir al carrito
           </button>
 
-          <!-- Aviso si está inactivo -->
           <div *ngIf="modalProducto.estado !== 'activo'"
                class="w-full py-3 bg-gray-300 text-center text-gray-700 rounded-lg flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-            </svg>
-            Producto no disponible
+            🚫 Producto no disponible
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
