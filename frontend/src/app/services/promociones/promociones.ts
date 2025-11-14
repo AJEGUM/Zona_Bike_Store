@@ -23,6 +23,11 @@ export class Promociones {
   }
 
   subirImagen(id: number, base64: string) {
-    return this.http.post(`${this.api}/imagen/${id}`, { imagen: base64 });
+    return this.http.post(`${this.api}/${id}/imagen`, { imagen: base64 });
   }
+
+  eliminarPromocion(id: number) {
+    return this.http.delete(`${this.api}/${id}`);
+  }
+
 }

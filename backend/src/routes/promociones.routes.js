@@ -1,12 +1,12 @@
-// routes/promociones.routes.js
-const router = require("express").Router();
-const promocionesController = require("../controllers/promociones.controller");
+const express = require("express");
+const router = express.Router();
+const controller = require("../controllers/promociones.controller");
 
-router.post("/", promocionesController.crear);
-router.get("/", promocionesController.listar);
-router.put("/:id", promocionesController.actualizar);
+router.get("/", controller.obtener);
+router.post("/", controller.crear);
+router.put("/:id", controller.actualizar);
+router.delete("/:id", controller.eliminar);
 
-// Subir imagen directo desde promociones
-router.post("/imagen/:id", promocionesController.subirImagen);
+router.post("/:id/imagen", controller.subirImagen);
 
 module.exports = router;

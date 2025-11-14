@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ProductosService } from '../../services/productosServices/productos-services';
 import { NavBar } from '../../components/nav-bar/nav-bar';
 import { Carrito } from '../../services/carrito/carrito';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pag-principal',
   standalone: true,
-  imports: [CommonModule, NavBar, FormsModule],
+  imports: [CommonModule, NavBar, FormsModule, ReactiveFormsModule],
   templateUrl: './pag-principal.html',
 })
 export class PagPrincipal implements OnInit {

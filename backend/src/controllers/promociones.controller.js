@@ -4,38 +4,47 @@ const imagenesController = require('./imagenes.controller');
 
 class PromocionesController {
 
-    async crear(req, res) {
+    async obtener(req, res) {
         try {
-            const id = await promocionesService.crearPromocion(req.body);
-            res.json({ message: "Promoción creada", id_promocion: id });
-        } catch (err) {
-            res.status(500).json({ error: "Error al crear promoción" });
-        }
-    }
-
-    async actualizar(req, res) {
-        try {
-            await promocionesService.actualizarPromocion(req.params.id, req.body);
-            res.json({ message: "Promoción actualizada" });
-        } catch (err) {
-            res.status(500).json({ error: "Error al actualizar" });
-        }
-    }
-
-    async listar(req, res) {
-        try {
-            const data = await promocionesService.listarPromociones();
+            const data = await promocionesService.obtenerPromociones();
             res.json(data);
         } catch (err) {
             res.status(500).json({ error: "Error al listar promociones" });
         }
     }
 
-    // Subir imagen desde aquí mismo
+    async crear(req, res) {
+        try {
+            const promocion = req.body;
+
+            const nueva = await promocionesService.crearPromocion(promocion);
+
+            return res.status(201).json({ success: true, promocion: nueva });
+
+        } catch (err) {
+            console.error('Error al crear promoción:', err);
+            return res.status(500).json({ error: 'Error al crear promoción' });
+        }
+    }
+
+    async actualizar(req, res) {
+        try {
+            const { id } = req.params;
+            const body = req.body;
+
+            const actualizada = await promocionesService.actualizarPromocion(id, body);
+            res.json(actualizada);
+
+        } catch (err) {
+            res.status(500).json({ error: "Error al actualizar promoción" });
+        }
+    }
+
+    // ⭐ SUBIR IMAGEN (igual que productos)
     async subirImagen(req, res) {
         try {
             const { id } = req.params;
-            const imagen = req.body.imagen;
+            const { imagen } = req.body;
 
             const result = await imagenesController.guardarImagen(
                 "promociones",
@@ -44,11 +53,25 @@ class PromocionesController {
                 imagen
             );
 
-            res.json(result);
-        } catch (err) {
+            res.json({ success: true, result });
+
+        } catch (error) {
+            console.error(error);
             res.status(500).json({ error: "Error al subir imagen" });
         }
     }
+
+    async eliminar(req, res) {
+        try {
+            const { id } = req.params;
+            const result = await promocionesService.eliminarPromocion(id);
+            res.json({ success: true });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Error al eliminar promoción" });
+        }
+    }
+
 }
 
 module.exports = new PromocionesController();
