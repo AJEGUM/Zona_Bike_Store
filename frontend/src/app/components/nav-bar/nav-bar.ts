@@ -28,6 +28,9 @@ export class NavBar implements OnChanges {
   email = '';
   clave = '';
 
+  usuarioLogueado = '';
+  rolUsuario = '';
+
   @Input() mensajeExterno: string | null = null;
   @Output() searchChanged = new EventEmitter<string>();
 
@@ -37,6 +40,15 @@ export class NavBar implements OnChanges {
       this.totalFormateado = this.carritoService.obtenerTotalFormateado();
     });
   }
+
+  ngOnInit() {
+    const payload = this.AuthService.decodificarToken();
+    if (payload) {
+      this.usuarioLogueado = payload.nombre;
+      this.rolUsuario = payload.rol;
+    }
+  }
+
 
 
   // 👇 Esta función detecta cuando cambia el mensaje desde el padre
@@ -73,24 +85,18 @@ export class NavBar implements OnChanges {
 
 login() {
   if (!this.email || !this.clave) return;
-  console.log("📤 Enviando al backend:", this.email, this.clave);
 
   this.AuthService.iniciarSesion(this.email, this.clave).subscribe({
     next: (resp: any) => {
- console.log("🔥 Entró al next");
-  console.log("🟢 Token recibido:", resp.token);
 
-  // Forzar guardado
-  localStorage.setItem('token', resp.token);
-
-  console.log("📦 Token guardado en localStorage:", localStorage.getItem('token'));
+      localStorage.setItem('token', resp.token);
       this.AuthService.guardarToken(resp.token);
 
-      const rol = JSON.parse(atob(resp.token.split('.')[1])).rol;
-      console.log("ROL DESDE TOKEN DIRECTO:", rol);
-console.log(">>> NAVEGANDO A ADMIN...");
+      const payload = this.AuthService.decodificarToken();
+      this.usuarioLogueado = payload?.nombre || '';
+      this.rolUsuario = payload?.rol || '';
 
-      if (rol === "Administrador") {
+      if (this.rolUsuario === "Administrador") {
         this.router.navigate(['/admin']);
       } else {
         this.router.navigate(['/']);
@@ -104,6 +110,14 @@ console.log(">>> NAVEGANDO A ADMIN...");
     }
   });
 }
+
+logout() {
+  this.AuthService.cerrarSesion();
+  this.usuarioLogueado = '';
+  this.rolUsuario = '';
+}
+
+
 
   register() {
       if (!this.nombre || !this.email || !this.clave) return;
