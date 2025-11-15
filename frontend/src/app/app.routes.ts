@@ -26,12 +26,8 @@ export const routes: Routes = [
       import('./components/nav-bar/nav-bar')
         .then(m => m.NavBar),
     children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./pages/pag-principal/pag-principal')
-            .then(m => m.PagPrincipal)
-      }
+      {path: '', loadComponent: () => import('./pages/pag-principal/pag-principal').then(m => m.PagPrincipal)},
+      {path: 'productos', loadComponent: () => import('./pages/pag-productos/pag-productos').then(m => m.PagProductos)}
     ]
   }
 
