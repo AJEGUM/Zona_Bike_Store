@@ -12,7 +12,6 @@ class UsuariosController {
       `);
       res.json(usuarios);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ error: 'Error al obtener usuarios' });
     }
   }
@@ -40,7 +39,6 @@ class UsuariosController {
 
       res.json(nuevoUsuario);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ error: 'Error al agregar usuario' });
     }
   }
@@ -73,7 +71,6 @@ class UsuariosController {
       });
 
     } catch (error) {
-      console.error(error);
       res.status(500).json({ error: 'Error al editar usuario' });
     }
   }
@@ -85,7 +82,6 @@ class UsuariosController {
       const [rows] = await db.query('SELECT nombre FROM roles WHERE id_rol = ?', [id_rol]);
       return rows.length ? rows[0].nombre : '';
     } catch (error) {
-      console.error('Error al obtener nombre del rol:', error);
       return '';
     }
   }
@@ -107,7 +103,6 @@ class UsuariosController {
       const [roles] = await db.query('SELECT id_rol, nombre FROM roles');
       res.json(roles);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ error: 'Error al obtener roles' });
     }
   }

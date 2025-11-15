@@ -23,8 +23,6 @@ export class BannerPromociones implements OnInit {
           ...p,
           imagen: "data:image/jpeg;base64," + p.imagen
         }));
-
-      console.log("Promos procesadas:", this.promociones);
     });
   }
 

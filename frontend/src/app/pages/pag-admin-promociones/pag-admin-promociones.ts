@@ -134,7 +134,6 @@ guardar() {
 
 
 imagenSeleccionada(evento: any) {
-  console.log("SE EJECUTO");
 
   const archivo = evento.target.files[0];
 

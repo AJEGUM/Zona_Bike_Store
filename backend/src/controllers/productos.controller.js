@@ -9,7 +9,6 @@ class Productos{
       res.json(productos);
     } catch (err) {
       res.status(500).json({ error: 'Error al obtener productos' });
-      console.log(err)
     }
   }
 
@@ -19,7 +18,6 @@ class Productos{
       const nuevoProducto = await ServicesProductos.crearProducto(producto);
       return res.status(201).json({ success: true, producto: nuevoProducto });
     } catch (err) {
-      console.error('Error al crear producto:', err);
       return res.status(500).json({ error: 'Error al crear producto' });
     }
   }

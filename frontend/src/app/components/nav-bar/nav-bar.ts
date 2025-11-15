@@ -131,12 +131,10 @@ logout() {
 
       this.usuarioServices.crearUsuario(payload).subscribe({
         next: (resp: any) => {
-          console.log('Usuario registrado:', resp);
           this.mostrarAlerta('Usuario registrado correctamente');
           this.cerrarModal();
         },
         error: (err) => {
-          console.error(err);
           this.mostrarAlerta('Error al registrar');
         }
       });

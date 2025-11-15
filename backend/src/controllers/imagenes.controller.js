@@ -32,7 +32,6 @@ class ImagenesController {
             };
 
         } catch (error) {
-            console.error("ERROR AL GUARDAR LA IMAGEN", error);
             throw error;
         }
     }
@@ -51,7 +50,6 @@ class ImagenesController {
             return { imagen: rows[0].imagen }; // ✅ base64 directo
 
         } catch (error) {
-            console.error("ERROR al obtener la imagen", error);
             throw error;
         }
     }
@@ -69,7 +67,6 @@ class ImagenesController {
             };
 
         } catch (error) {
-            console.error("ERROR al eliminar imagen", error);
             throw error;
         }
     }

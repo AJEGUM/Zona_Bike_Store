@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 class AuthController {
 async login(req, res) {
   try {
-    console.log("📥 Datos recibidos en backend:", req.body);
 
     const { email, clave } = req.body;
 
@@ -24,20 +23,15 @@ async login(req, res) {
     const usuario = rows[0];
 
     if (!usuario) {
-      console.log("❌ Usuario no existe");
       return res.status(401).json({ message: "Usuario no encontrado" });
     }
 
-    console.log("🔎 Hash en BD:", usuario.clave);
 
     if (!usuario.clave) {
-      console.log("❌ ERROR: usuario.clave está vacío en la BD");
       return res.status(500).json({ message: "Hash inválido en BD" });
     }
 
     const esCorrecta = await bcrypt.compare(clave, usuario.clave);
-
-    console.log("🔐 Resultado bcrypt:", esCorrecta);
 
     if (!esCorrecta) {
       return res.status(401).json({ message: "Contraseña incorrecta" });
@@ -56,7 +50,6 @@ async login(req, res) {
     return res.json({ token });
 
   } catch (error) {
-    console.error("💥 ERROR LOGIN:", error);
     return res.status(500).json({ message: "Error interno" });
   }
 }

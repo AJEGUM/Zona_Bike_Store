@@ -35,7 +35,6 @@ export class PagPrincipal implements OnInit {
       next: (data: any[]) => {
         this.productos = data;
         this.productosFiltrados = data;
-        console.log("Productos cargados:", this.productos);
       },
       error: (err) => console.error("Error al cargar productos:", err)
     });

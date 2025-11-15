@@ -10,7 +10,6 @@ export class AuthService {
    constructor(private http: HttpClient, private router:Router) {}
 
   iniciarSesion(email: string, clave: string) {
-      console.log("🔍 AuthService → datos enviados:", { email, clave }); // console A
     return this.http.post(`${environment.apiUrl}/auth/login`, { email, clave });
   }
 
@@ -36,7 +35,6 @@ export class AuthService {
 
       // Un token JWT válido siempre tiene 3 partes
       if (partes.length !== 3) {
-        console.warn('Token inválido:', token);
         return null;
       }
 
@@ -44,7 +42,6 @@ export class AuthService {
       return payload;
 
     } catch (e) {
-      console.error('Error al decodificar token:', e);
       return null;
     }
   }

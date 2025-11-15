@@ -22,7 +22,6 @@ class PromocionesController {
             return res.status(201).json({ success: true, promocion: nueva });
 
         } catch (err) {
-            console.error('Error al crear promoción:', err);
             return res.status(500).json({ error: 'Error al crear promoción' });
         }
     }
@@ -56,7 +55,6 @@ class PromocionesController {
             res.json({ success: true, result });
 
         } catch (error) {
-            console.error(error);
             res.status(500).json({ error: "Error al subir imagen" });
         }
     }
@@ -67,7 +65,6 @@ class PromocionesController {
             const result = await promocionesService.eliminarPromocion(id);
             res.json({ success: true });
         } catch (error) {
-            console.error(error);
             res.status(500).json({ error: "Error al eliminar promoción" });
         }
     }

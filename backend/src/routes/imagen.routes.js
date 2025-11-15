@@ -14,7 +14,6 @@ router.post('/guardar/:tabla/:campoId/:id', async (req, res) => {
         const resultado = await imagenesController.guardarImagen(tabla, campoId, id, imagenBase64);
         res.json(resultado);
     } catch (error) {
-        console.error("Error al guardar imagen", error);
         res.status(500).json({ error: "Error al guardar imagen" });
     }
 });

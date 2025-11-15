@@ -123,7 +123,6 @@ class ServicesProductos {
       `);
       return rows;
     } catch (error) {
-      console.error('Error al obtener categorías:', error);
       throw error;
     }
   }
@@ -137,7 +136,6 @@ class ServicesProductos {
       `);
       return rows;
     } catch (error) {
-      console.error('Error al obtener marcas:', error);
       throw error;
     }
   }
