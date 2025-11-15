@@ -19,8 +19,9 @@ export class Promociones {
   }
 
   listarPromociones() {
-    return this.http.get(`${this.api}`);
+    return this.http.get<any[]>(`${this.api}`);
   }
+
 
   subirImagen(id: number, base64: string) {
     return this.http.post(`${this.api}/${id}/imagen`, { imagen: base64 });

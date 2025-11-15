@@ -1,0 +1,31 @@
+<swiper-container
+  slides-per-view="1"
+  loop="true"
+  speed="800"
+  autoplay='{"delay":3000, "disableOnInteraction":false}'
+  class="overflow-hidden shadow-lg block w-full max-h-[300px] h-[200px] sm:h-[260px] md:h-[300px]"
+>
+  <swiper-slide *ngFor="let promo of promociones">
+    <div class="relative w-full h-full">
+      
+      <img 
+        [src]="promo.imagen" 
+        class="w-full h-full object-cover object-center"
+      />
+
+        <div class="absolute inset-0 flex flex-col text-white font-semibold p-4 pointer-events-none"
+            [ngClass]="{
+            'justify-start text-left bg-gradient-to-b from-black/50 to-transparent': promo.posicion_texto === 'arriba',
+            'justify-center text-center': promo.posicion_texto === 'centro',
+            'justify-end text-left bg-gradient-to-t from-black/50 to-transparent pb-4': promo.posicion_texto === 'abajo'
+            }">
+
+        <h3 class="text-lg drop-shadow-md">{{ promo.titulo }}</h3>
+        <p class="text-sm drop-shadow">{{ promo.descripcion }}</p>
+        </div>
+
+
+
+    </div>
+  </swiper-slide>
+</swiper-container>

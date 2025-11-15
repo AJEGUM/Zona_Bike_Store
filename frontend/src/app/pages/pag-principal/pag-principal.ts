@@ -4,12 +4,14 @@ import { ProductosService } from '../../services/productosServices/productos-ser
 import { NavBar } from '../../components/nav-bar/nav-bar';
 import { Carrito } from '../../services/carrito/carrito';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BannerPromociones } from '../../components/banner-promociones/banner-promociones';
 
 @Component({
   selector: 'app-pag-principal',
   standalone: true,
-  imports: [CommonModule, NavBar, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, NavBar, FormsModule, ReactiveFormsModule, BannerPromociones],
   templateUrl: './pag-principal.html',
+  
 })
 export class PagPrincipal implements OnInit {
   productos: any[] = [];
