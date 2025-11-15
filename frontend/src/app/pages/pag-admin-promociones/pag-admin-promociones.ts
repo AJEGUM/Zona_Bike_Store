@@ -16,7 +16,7 @@ export class PagAdminPromociones {
   promociones: any[] = [];
   modalAbierto: boolean = false;
   promoEditando: any = null;
-
+  imagenInvalida: boolean = false;
   imagenBase64: string | null = null; // Solo se usa si el usuario carga nueva imagen
 
   // FORMULARIO
@@ -88,6 +88,12 @@ export class PagAdminPromociones {
   }
 
 guardar() {
+
+ if (this.imagenInvalida) {
+    alert("No puedes guardar la promoción hasta que subas una imagen con las dimensiones mínimas.");
+    return;
+  }
+
   const payload = {
     titulo: this.form.titulo,
     descripcion: this.form.descripcion,
@@ -127,21 +133,49 @@ guardar() {
   }
 
 
-onFileSelected(event: any) {
-  const file = event.target.files[0];
-  if (!file) {
+imagenSeleccionada(evento: any) {
+  console.log("SE EJECUTO");
+
+  const archivo = evento.target.files[0];
+
+  this.imagenInvalida = false;
+
+  if (!archivo) {
     this.imagenBase64 = null;
     this.form.imagen = null;
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    this.imagenBase64 = reader.result?.toString() ?? null; // preview temporal
-  };
-  reader.readAsDataURL(file);
+  const lector = new FileReader();
+  const imagen = new Image();
 
-  this.form.imagen = file; // para enviar al backend
+  lector.onload = (e: any) => {
+    imagen.src = e.target.result;
+
+    imagen.onload = () => {
+      const anchoMinimo = 1200;
+      const altoMinimo = 400;
+
+      if (imagen.width < anchoMinimo || imagen.height < altoMinimo) {
+        alert(`La imagen es muy pequeña. Debe medir mínimo ${anchoMinimo} x ${altoMinimo}px.`);
+
+        this.imagenInvalida = true;
+        evento.target.value = "";
+        this.imagenBase64 = null;
+        this.form.imagen = null;
+
+        return;
+      }
+
+      // IMAGEN VÁLIDA
+      this.imagenBase64 = e.target.result; // esto sí se muestra en el preview
+      this.form.imagen = this.imagenBase64; // se guarda para enviar al backend
+    };
+  };
+
+  lector.readAsDataURL(archivo);
 }
+
+
 
 }
