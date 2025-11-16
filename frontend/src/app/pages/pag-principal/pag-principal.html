@@ -5,7 +5,7 @@
 
 
 <div [class.blur-xs]="modalAbierto" class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-15 pt-10">
-  <h2 class="text-2xl font-semibold mb-8">Nuestro Catálogo</h2>
+  <h2 class="text-2xl font-semibold mb-8 text-white">Nuestro Catálogo</h2>
 
   <!-- GRID -->
   <div *ngIf="productosFiltrados.length > 0; else noProductos" 
@@ -13,7 +13,7 @@
 
     <!-- PRODUCTO -->
     <div *ngFor="let p of productosFiltrados" (click)="abrirModalProducto(p)"
-         class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-200 bg-white flex flex-col group relative">
+         class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-600 bg-[#242938] flex flex-col group relative">
 
       <!-- IMAGEN -->
       <div class="h-60 sm:h-64 md:h-72 bg-gray-100 overflow-hidden relative">
@@ -29,28 +29,28 @@
 
       <!-- INFO -->
       <div class="p-3 flex flex-col">
-        <p class="text-gray-500 text-sm">{{ p.categoria?.nombre }}</p>
-        <h3 class="text-lg mt-1 font-semibold">{{ p.nombre }}</h3>
-        <p class="text-gray-900 text-lg mt-2 font-bold">{{ p.precio_venta_formateado }} COP</p>
-        <p class="text-sm text-gray-600 mt-1">Stock: {{ p.stock || 0 }}</p>
+        <p class="text-[#6E5FD9] text-sm">{{ p.categoria?.nombre }}</p>
+        <h3 class="text-lg mt-1 font-semibold text-white">{{ p.nombre }}</h3>
+        <p class="text-gray-100 text-lg mt-2 font-semibold">{{ p.precio_venta_formateado }} COP</p>
+        <p class="text-sm text-gray-100 mt-1">Stock: {{ p.stock || 0 }}</p>
 
         <!-- BOTÓN / MENSAJE -->
         <div class="mt-4">
           <!-- Mostrar solo si está activo -->
             <button *ngIf="p.estado === 'activo'" 
                     (click)="agregarAlCarrito(p, 1); $event.stopPropagation()"
-                    class="bg-[#030213] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full">
-            Agregar al carrito 🛒
+                    class="bg-[#442ED9] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full font-semibold">
+            Añadir al carrito
             </button>
 
 
           <!-- Mensaje si está inactivo -->
           <div *ngIf="p.estado !== 'activo'"
-               class="w-full py-2 rounded-lg bg-gray-300 text-center text-gray-700 flex items-center justify-center gap-2 cursor-not-allowed">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+               class="w-full py-2 rounded-lg bg-[#2B3548] text-center text-gray-400 flex items-center justify-center gap-2 cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
             </svg>
-            Producto no disponible
+          No disponible
           </div>
         </div>
       </div>
@@ -73,13 +73,10 @@
   <div class="absolute inset-0" (click)="cerrarModalProducto()"></div>
 
   <!-- Contenedor del modal -->
-  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-fade-in z-10 flex flex-col">
+  <div class="relative bg-[#242938] rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-fade-in z-10 flex flex-col">
     
     <!-- Header -->
     <div class="flex justify-between items-center px-6 py-4 border-b">
-      <h2 class="text-xl font-semibold text-gray-800 truncate">
-        {{ modalProducto.nombre }}
-      </h2>
       <button (click)="cerrarModalProducto()"
               class="text-gray-400 hover:text-gray-700 text-2xl leading-none transition">
         &times;
@@ -90,7 +87,7 @@
     <div class="grid md:grid-cols-2 gap-0 flex-1 overflow-y-auto">
       
       <!-- Imagen -->
-      <div class="bg-gray-100 flex items-center justify-center p-6">
+      <div class="bg-[#1A1D29] flex items-center justify-center p-6">
         <img [src]="obtenerImagen(modalProducto)" [alt]="modalProducto.nombre"
              class="w-full max-h-[450px] object-contain rounded-xl" />
       </div>
@@ -98,7 +95,17 @@
       <!-- Información -->
       <div class="p-6 flex flex-col justify-between">
         <div>
-          <p class="text-sm text-gray-500 mb-1">{{ modalProducto.categoria?.nombre }}</p>
+          <h2 class="text-4xl text-center font-semibold text-gray-100 truncate">
+            {{ modalProducto.nombre }}
+          </h2>
+          <p class="text-sm text-gray-300 mb-1 text-center">{{ modalProducto.categoria?.nombre }}</p>
+
+          <p class="text-3xl font-semibold text-gray-100 mb-4">{{ modalProducto.precio_venta_formateado }} COP</p>          
+
+          
+          
+          <h3 class="text-base font-semibold text-gray-300 mb-2">Descripción:</h3>
+          <p class="text-gray-300 leading-relaxed mb-6 whitespace-pre-line">{{ modalProducto.descripcion }}</p>
           
           <div class="flex items-center gap-2 mb-3">
             <span *ngIf="modalProducto.estado === 'activo'" 
@@ -111,12 +118,7 @@
             </span>
           </div>
 
-          <p class="text-3xl font-bold text-gray-900 mb-4">{{ modalProducto.precio_venta_formateado }} COP</p>
-
-          <h3 class="text-base font-semibold text-gray-800 mb-2">Descripción</h3>
-          <p class="text-gray-600 leading-relaxed mb-6 whitespace-pre-line">{{ modalProducto.descripcion }}</p>
-
-          <div class="border-t pt-4 space-y-2 text-sm text-gray-700">
+          <div class="border-t pt-4 space-y-2 text-sm text-gray-300">
             <p>Stock disponible: <span class="font-medium">{{ modalProducto.stock || 0 }} unidades</span></p>
             <p>Categoría: <span class="font-medium">{{ modalProducto.categoria?.nombre }}</span></p>
           </div>
@@ -125,15 +127,15 @@
         <!-- CONTROLES -->
         <div class="mt-6">
           <div class="flex items-center gap-3 mb-4" *ngIf="modalProducto.estado === 'activo'">
-            <span class="text-sm text-gray-700 font-medium">Cantidad</span>
+            <span class="text-sm text-gray-100 font-medium">Cantidad</span>
             <div class="flex items-center border rounded-lg">
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
+              <button class="px-3 py-1 text-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
               <input type="number"
                     [(ngModel)]="cantidad"
                     min="1"
-                    class="w-12 text-center text-gray-800 border-x outline-none"
+                    class="w-12 text-center text-gray-100"
                     (input)="cantidad = +$event.target.value" />
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-r-lg" (click)="aumentarCantidad()">+</button>
+              <button class="px-3 py-1 text-gray-100 rounded-r-lg" (click)="aumentarCantidad()">+</button>
             </div>
           </div>
 
@@ -144,7 +146,7 @@
           </button>
 
           <div *ngIf="modalProducto.estado !== 'activo'"
-               class="w-full py-3 bg-gray-300 text-center text-gray-700 rounded-lg flex items-center justify-center gap-2">
+               class="w-full py-3 bg-[#2B3548] text-center text-gray-300 rounded-lg flex items-center justify-center gap-2">
             🚫 Producto no disponible
           </div>
         </div>
