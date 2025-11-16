@@ -257,6 +257,16 @@
         class="w-full bg-[#030213] text-white py-2 rounded-lg hover:bg-gray-900 transition font-medium">
         {{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}
       </button>
+
+      <button 
+        type="button"
+        (click)="loginGoogle()"
+        class="w-full bg-white text-black py-2 rounded-lg hover:bg-gray-200 transition font-medium flex items-center justify-center gap-2"
+      >
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" />
+        Continuar con Google
+      </button>
+
     </form>
 
     <!-- Cambio de modo -->

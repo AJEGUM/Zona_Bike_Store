@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 import { adminGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
+  {
+    path: 'oauth-callback',
+    loadComponent: () =>
+      import('./components/oauth-callback/oauth-callback').then(m => m.OauthCallback)
+  },
 
   // PANEL ADMIN (usa nav-bar-admin como layout)
   {
