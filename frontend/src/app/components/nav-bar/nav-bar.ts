@@ -111,13 +111,16 @@ login() {
   });
 }
 
+loginGoogle() {
+  window.location.href = "http://localhost:3000/api/auth/google";
+}
+
+
 logout() {
   this.AuthService.cerrarSesion();
   this.usuarioLogueado = '';
   this.rolUsuario = '';
 }
-
-
 
   register() {
       if (!this.nombre || !this.email || !this.clave) return;
