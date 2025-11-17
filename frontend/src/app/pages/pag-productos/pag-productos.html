@@ -6,7 +6,7 @@
 <div [class.blur-xs]="modalAbierto"
      class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pt-10">
 
-  <h2 class="text-2xl font-semibold mb-8">Nuestro Catálogo</h2>
+  <h2 class="text-white text-2xl font-semibold mb-8">Nuestro Catálogo</h2>
 
     <!-- BOTÓN DE FILTROS SOLO EN MÓVIL -->
   <div class="flex justify-end mb-4 lg:hidden">
@@ -38,12 +38,12 @@
       <!-- sticky corregido -->
       <div class="sticky top-20">
 
-        <div class="bg-white shadow-md rounded-xl p-5 border border-gray-200">
+        <div class="bg-[#242938] shadow-md rounded-xl p-5 border border-gray-600">
 
           <!-- HEADER FILTRO -->
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">Filtros</h3>
-            <button class="text-sm text-blue-600 hover:underline"
+            <h3 class="text-lg text-white font-semibold">Filtros</h3>
+            <button class="text-sm text-white hover:underline"
                     (click)="limpiarFiltros()">
               Limpiar
             </button>
@@ -51,11 +51,11 @@
 
           <!-- CATEGORÍAS -->
           <div class="mb-6">
-            <h3 class="font-medium text-gray-700 mb-2">Categorías</h3>
+            <h3 class="font-medium text-white mb-2">Categorías</h3>
 
             <div class="space-y-2">
               <label *ngFor="let cat of categorias"
-                     class="flex items-center gap-2 cursor-pointer">
+                     class="text-white flex items-center gap-2 cursor-pointer">
 
                     <input 
                       type="checkbox"
@@ -70,7 +70,7 @@
 
           <!-- RANGO DE PRECIO (SOLO 1 SLIDER) -->
           <div class="mb-6">
-            <p class="font-medium mb-2">Precio máximo</p>
+            <p class="text-white font-medium mb-2">Precio máximo</p>
 
             <!-- SLIDER ÚNICO -->
             <input type="range"
@@ -78,9 +78,9 @@
                    max="25000000"
                    [(ngModel)]="precioMax"
                    (input)="cambiarPrecio()"
-                   class="w-full accent-black" />
+                   class="w-full accent-white" />
 
-            <div class="flex justify-between text-sm text-gray-600 mt-2">
+            <div class="flex justify-between text-sm text-white mt-2">
               <span>Desde: {{ precioMin | currency:'COP' }}</span>
               <span>Hasta: {{ precioMax | currency:'COP' }}</span>
             </div>
@@ -88,9 +88,9 @@
 
           <!-- DISPONIBILIDAD -->
           <div class="mb-4">
-            <p class="font-medium mb-2">Disponibilidad</p>
+            <p class="text-white font-medium mb-2">Disponibilidad</p>
 
-            <label class="flex items-center gap-2 cursor-pointer">
+            <label class="text-white flex items-center gap-2 cursor-pointer">
               <input 
                 type="checkbox"
                 class="w-4 h-4 rounded border-gray-300"
@@ -115,7 +115,7 @@
 
         <div *ngFor="let p of productosFiltrados"
              (click)="abrirModalProducto(p)"
-             class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-200 bg-white flex flex-col group relative">
+             class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-600 bg-[#242938] flex flex-col group relative">
 
           <!-- IMAGEN -->
           <div class="h-60 sm:h-64 md:h-72 bg-gray-100 overflow-hidden relative">
@@ -132,15 +132,15 @@
 
           <!-- INFO -->
           <div class="p-3 flex flex-col">
-            <p class="text-gray-500 text-sm">{{ p.categoria?.nombre }}</p>
-            <h3 class="text-lg mt-1 font-semibold">{{ p.nombre }}</h3>
-            <p class="text-gray-900 text-lg mt-2 font-bold">{{ p.precio_venta_formateado }} COP</p>
-            <p class="text-sm text-gray-600 mt-1">Stock: {{ p.stock || 0 }}</p>
+            <p class="text-[#6E5FD9] text-sm">{{ p.categoria?.nombre }}</p>
+            <h3 class="text-lg text-white mt-1 font-semibold">{{ p.nombre }}</h3>
+            <p class="text-white text-lg mt-2 font-semibold">{{ p.precio_venta_formateado }} COP</p>
+            <p class="text-sm text-white mt-1">Stock: {{ p.stock || 0 }}</p>
 
             <div class="mt-4">
               <button *ngIf="p.estado === 'activo'"
                       (click)="agregarAlCarrito(p, 1); $event.stopPropagation()"
-                      class="bg-[#030213] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full">
+                      class="bg-[#442ED9] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full">
                 Agregar al carrito 🛒
               </button>
 
@@ -173,13 +173,10 @@
   <div class="absolute inset-0" (click)="cerrarModalProducto()"></div>
 
   <!-- Contenedor del modal -->
-  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-fade-in z-10 flex flex-col">
+  <div class="relative bg-[#242938] rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-fade-in z-10 flex flex-col">
     
     <!-- Header -->
     <div class="flex justify-between items-center px-6 py-4 border-b">
-      <h2 class="text-xl font-semibold text-gray-800 truncate">
-        {{ modalProducto.nombre }}
-      </h2>
       <button (click)="cerrarModalProducto()"
               class="text-gray-400 hover:text-gray-700 text-2xl leading-none transition">
         &times;
@@ -190,7 +187,7 @@
     <div class="grid md:grid-cols-2 gap-0 flex-1 overflow-y-auto">
       
       <!-- Imagen -->
-      <div class="bg-gray-100 flex items-center justify-center p-6">
+      <div class="bg-[#1A1D29] flex items-center justify-center p-6">
         <img [src]="obtenerImagen(modalProducto)" [alt]="modalProducto.nombre"
              class="w-full max-h-[450px] object-contain rounded-xl" />
       </div>
@@ -198,7 +195,17 @@
       <!-- Información -->
       <div class="p-6 flex flex-col justify-between">
         <div>
-          <p class="text-sm text-gray-500 mb-1">{{ modalProducto.categoria?.nombre }}</p>
+          <h2 class="text-4xl text-center font-semibold text-gray-100 truncate">
+            {{ modalProducto.nombre }}
+          </h2>
+          <p class="text-sm text-gray-300 mb-1 text-center">{{ modalProducto.categoria?.nombre }}</p>
+
+          <p class="text-3xl font-semibold text-gray-100 mb-4">{{ modalProducto.precio_venta_formateado }} COP</p>          
+
+          
+          
+          <h3 class="text-base font-semibold text-gray-300 mb-2">Descripción:</h3>
+          <p class="text-gray-300 leading-relaxed mb-6 whitespace-pre-line">{{ modalProducto.descripcion }}</p>
           
           <div class="flex items-center gap-2 mb-3">
             <span *ngIf="modalProducto.estado === 'activo'" 
@@ -211,12 +218,7 @@
             </span>
           </div>
 
-          <p class="text-3xl font-bold text-gray-900 mb-4">{{ modalProducto.precio_venta_formateado }} COP</p>
-
-          <h3 class="text-base font-semibold text-gray-800 mb-2">Descripción</h3>
-          <p class="text-gray-600 leading-relaxed mb-6 whitespace-pre-line">{{ modalProducto.descripcion }}</p>
-
-          <div class="border-t pt-4 space-y-2 text-sm text-gray-700">
+          <div class="border-t pt-4 space-y-2 text-sm text-gray-300">
             <p>Stock disponible: <span class="font-medium">{{ modalProducto.stock || 0 }} unidades</span></p>
             <p>Categoría: <span class="font-medium">{{ modalProducto.categoria?.nombre }}</span></p>
           </div>
@@ -225,26 +227,26 @@
         <!-- CONTROLES -->
         <div class="mt-6">
           <div class="flex items-center gap-3 mb-4" *ngIf="modalProducto.estado === 'activo'">
-            <span class="text-sm text-gray-700 font-medium">Cantidad</span>
+            <span class="text-sm text-gray-100 font-medium">Cantidad</span>
             <div class="flex items-center border rounded-lg">
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
+              <button class="px-3 py-1 text-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
               <input type="number"
                     [(ngModel)]="cantidad"
                     min="1"
-                    class="w-12 text-center text-gray-800 border-x outline-none"
+                    class="w-12 text-center text-gray-100"
                     (input)="cantidad = +$event.target.value" />
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-r-lg" (click)="aumentarCantidad()">+</button>
+              <button class="px-3 py-1 text-gray-100 rounded-r-lg" (click)="aumentarCantidad()">+</button>
             </div>
           </div>
 
           <button *ngIf="modalProducto.estado === 'activo'" 
                   (click)="agregarAlCarrito(modalProducto, cantidad); cerrarModalProducto()"
-                  class="w-full bg-[#030213] text-white py-3 rounded-lg hover:bg-gray-900 font-medium flex items-center justify-center gap-2 transition">
+                  class="w-full bg-[#442ED9] text-white py-3 rounded-lg hover:bg-gray-900 font-medium flex items-center justify-center gap-2 transition">
             🛒 Añadir al carrito
           </button>
 
           <div *ngIf="modalProducto.estado !== 'activo'"
-               class="w-full py-3 bg-gray-300 text-center text-gray-700 rounded-lg flex items-center justify-center gap-2">
+               class="w-full py-3 bg-[#2B3548] text-center text-gray-300 rounded-lg flex items-center justify-center gap-2">
             🚫 Producto no disponible
           </div>
         </div>
