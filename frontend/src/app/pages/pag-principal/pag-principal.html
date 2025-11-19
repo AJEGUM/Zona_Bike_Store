@@ -13,7 +13,9 @@
 
     <!-- PRODUCTO -->
     <div *ngFor="let p of productosFiltrados" (click)="abrirModalProducto(p)"
-         class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-600 bg-[#242938] flex flex-col group relative">
+        class="rounded-xl overflow-hidden cursor-pointer shadow border border-gray-600 bg-[#242938] flex flex-col group relative
+                transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-800/30">
+
 
       <!-- IMAGEN -->
       <div class="h-60 sm:h-64 md:h-72 bg-gray-100 overflow-hidden relative">
