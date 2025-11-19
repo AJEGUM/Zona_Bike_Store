@@ -9,5 +9,8 @@ router.get('/', (req, res) => productosController.obtenerProductos(req, res));
 router.post('/', (req, res) => productosController.crearProducto(req, res));
 router.put('/:id', (req, res) => productosController.actualizarProducto(req, res));
 router.delete('/:id', (req, res) => productosController.eliminarProducto(req, res));
+router.get('/:id_producto/stock', (req, res) => productosController.obtenerStock(req, res));
+router.put('/:id_producto/stock', (req, res) => productosController.actualizarStock(req, res));
+
 
 module.exports = router;

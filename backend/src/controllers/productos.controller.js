@@ -60,6 +60,34 @@ class Productos{
       res.status(500).json({ error: 'Error al obtener marcas' });
     }
   }
+
+  async obtenerStock(req, res) {
+    try {
+      const { id_producto } = req.params;
+      const stock = await ServicesProductos.obtenerStock(id_producto);
+      res.json(stock);
+    } catch (err) {
+      res.status(500).json({ error: "Error al obtener stock" });
+    }
+  }
+
+  async actualizarStock(req, res) {
+    try {
+      const { id_producto } = req.params;
+      const { cantidad } = req.body;
+
+      if (cantidad < 0) {
+        return res.status(400).json({ error: "El stock no puede ser negativo" });
+      }
+
+      const resultado = await ServicesProductos.actualizarStock(id_producto, cantidad);
+      res.json(resultado);
+
+    } catch (err) {
+      res.status(500).json({ error: "Error al actualizar stock" });
+    }
+  }
+
 }
 
 module.exports = Productos

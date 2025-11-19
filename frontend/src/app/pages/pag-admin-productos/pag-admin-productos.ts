@@ -29,9 +29,9 @@ export class PagAdminProductos {
     id_categoria: 0,
     id_marca: 0,
     estado: 'activo',
-    categoria: undefined,
-    marca: undefined
+    stock: 0
   };
+
 
   constructor(private productosService: ProductosService) {}
 
@@ -43,8 +43,17 @@ export class PagAdminProductos {
 
   // ✅ Cargar datos
   cargarProductos() {
-    this.productosService.obtenerProductos().subscribe(data => this.productos = data);
+    this.productosService.obtenerProductos().subscribe(data => {
+      this.productos = data;
+
+      this.productos.forEach(p => {
+        this.productosService.obtenerStock(p.id_producto!).subscribe(stockResp => {
+          p.stock = stockResp.cantidad;
+        });
+      });
+    });
   }
+
 
   cargarCategorias() {
     this.productosService.obtenerCategorias().subscribe(data => this.categorias = data);
@@ -84,7 +93,8 @@ export class PagAdminProductos {
       imagen: p.imagen,
       estado: p.estado,
       id_categoria: p.categoria?.id_categoria!,
-      id_marca: p.marca?.id_marca!
+      id_marca: p.marca?.id_marca!,
+      stock: p.stock ?? 0
     };
 
     this.imagenBase64 = p.imagen || null;
@@ -92,46 +102,69 @@ export class PagAdminProductos {
     this.modalAbierto = true;
   }
 
+
   cerrarModal() {
     this.modalAbierto = false;
   }
 
   // ✅ Crear o editar producto
-  guardarProducto() {
+guardarProducto() {
 
-    // ✅ 1. Crear
-    if (!this.productoEditando) {
-      this.productosService.crearProducto(this.form).subscribe((nuevo: any) => {
+  if (this.imagenBase64) {
+    this.form.imagen = this.imagenBase64;
+  }
 
-        const id = nuevo.id_producto;
+  // 🟢 Caso 1: CREAR
+  if (!this.productoEditando) {
 
-        if (this.imagenBase64) {
-          this.productosService
-            .subirImagenBase64(id, this.imagenBase64)
-            .subscribe(() => this.cargarProductos());
-        }
+    this.productosService.crearProducto(this.form).subscribe((nuevo: any) => {
 
+      const id = nuevo.id_producto;
+
+      // Si hay imagen, subirla
+      if (this.imagenBase64) {
+        this.productosService
+          .subirImagenBase64(id, this.imagenBase64)
+          .subscribe(() => {
+            this.cargarProductos();
+            this.cerrarModal();
+          });
+
+      } else {
+        // Si no hay imagen, solo recargar y cerrar
         this.cargarProductos();
         this.cerrarModal();
-      });
+      }
 
-    } else {
-      // ✅ 2. Editar
-      this.productosService
-        .actualizarProducto(this.productoEditando.id_producto!, this.form)
-        .subscribe(() => {
+    });
 
-          if (this.imagenBase64) {
-            this.productosService
-              .subirImagenBase64(this.productoEditando!.id_producto!, this.imagenBase64)
-              .subscribe(() => this.cargarProductos());
-          }
+  } 
+  // 🔵 Caso 2: EDITAR
+  else {
 
-          this.cargarProductos();
-          this.cerrarModal();
-        });
-    }
+    const id = this.productoEditando.id_producto!;
+
+    this.productosService.actualizarProducto(id, this.form).subscribe(() => {
+
+      // Si se cambió la imagen, subirla
+      if (this.imagenBase64) {
+        this.productosService
+          .subirImagenBase64(id, this.imagenBase64)
+          .subscribe(() => {
+            this.cargarProductos();
+            this.cerrarModal();
+          });
+
+      } else {
+        // Si no se cambió imagen, solo recargar y cerrar
+        this.cargarProductos();
+        this.cerrarModal();
+      }
+
+    });
   }
+}
+
 
   eliminar(id: number) {
     if (confirm('¿Seguro que quieres eliminar este producto?')) {

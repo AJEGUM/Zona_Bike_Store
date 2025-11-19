@@ -14,6 +14,7 @@
           <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Categoría</th>
           <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Marca</th>
           <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Precio</th>
+          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Stock</th>
           <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Estado</th>
           <th class="px-4 py-3 text-center font-semibold bg-white border-b border-gray-300 rounded-tr-lg">Acciones</th>
         </tr>
@@ -25,6 +26,7 @@
           <td class="px-4 py-3">{{ p.categoria?.nombre || '-' }}</td>
           <td class="px-4 py-3">{{ p.marca?.nombre || '-' }}</td>
           <td class="px-4 py-3">${{ p.precio_venta }}</td>
+          <td class="px-4 py-3">{{ p.stock }}</td>
           <td class="px-4 py-3">
             <span class="px-2 py-1 rounded-md text-xs font-semibold"
                   [ngClass]="{
@@ -129,6 +131,13 @@
           <input type="number" [(ngModel)]="form.precio_venta" name="precio"
                  class="w-full border rounded-lg px-3 py-2" required />
         </div>
+
+        <div>
+          <label class="block font-medium">Stock</label>
+          <input type="number" [(ngModel)]="form.stock" name="stock"
+                class="w-full border rounded-lg px-3 py-2" required />
+        </div>
+
 
         <!-- Categoría -->
         <div>

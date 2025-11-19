@@ -22,6 +22,9 @@ export interface Producto {
     id_marca: number;
     nombre: string;
   };
+
+  stock?: number;
+
 }
 
 @Injectable({
@@ -62,4 +65,13 @@ export class ProductosService {
       imagen: base64
     });
   }
+
+  obtenerStock(id_producto: number): Observable<{ cantidad: number }> {
+    return this.http.get<{ cantidad: number }>(`${this.apiUrl}/${id_producto}/stock`);
+  }
+
+  actualizarStock(id_producto: number, cantidad: number) {
+    return this.http.put(`${this.apiUrl}/${id_producto}/stock`, { cantidad });
+  }
+
 }
