@@ -158,13 +158,36 @@ logout() {
   }
 
 
-  actualizarCantidad(id_producto: number, nuevaCantidad: number) {
-    const cantidadNum = Number(nuevaCantidad);
-    if (cantidadNum > 0) {
-      this.carritoService.actualizarCantidad(id_producto, cantidadNum);
-      this.totalFormateado = this.carritoService.obtenerTotalFormateado();
-    }
+actualizarCantidad(id_producto: number, nuevaCantidad: number) {
+  const cantidadNum = Number(nuevaCantidad);
+
+  // Buscar el item dentro del carrito actual
+  const item = this.carrito.find(p => p.id_producto === id_producto);
+  if (!item) return;
+
+  // 🔴 Si intenta bajar de 1 → corregimos a 1
+  if (cantidadNum < 1) {
+    item.cantidad = 1;
+    this.carritoService.actualizarCantidad(id_producto, 1);
   }
+
+  // 🔴 Validación: si intenta superar el stock disponible
+  else if (cantidadNum > item.stock) {
+    item.cantidad = item.stock;
+    this.carritoService.actualizarCantidad(id_producto, item.stock);
+
+    this.mostrarAlerta("⛔ No hay suficiente stock disponible");
+  }
+
+  // ✔ Cantidad válida
+  else {
+    item.cantidad = cantidadNum;
+    this.carritoService.actualizarCantidad(id_producto, cantidadNum);
+  }
+
+  this.totalFormateado = this.carritoService.obtenerTotalFormateado();
+}
+
 
 
   vaciarCarrito() {

@@ -60,22 +60,24 @@ export class PagPrincipal implements OnInit {
   }
 
   agregarAlCarrito(producto: any, cantidadInput?: number) {
-    const cantidadSeleccionada = cantidadInput ?? 1; // si no se pasa, usa 1
+    const cantidadSeleccionada = cantidadInput ?? 1;
 
     const item = {
       id_producto: producto.id_producto,
       nombre: producto.nombre,
-      precio_venta: producto.precio_venta,
+      precio_venta: Number(producto.precio_venta),
       precio_venta_formateado: producto.precio_venta_formateado,
       cantidad: cantidadSeleccionada,
-      subtotal: producto.precio_venta * cantidadSeleccionada,
+      subtotal: Number(producto.precio_venta) * cantidadSeleccionada,
       imagen: producto.imagen,
+      stock: Number(producto.stock) // 👈👈👈 IMPORTANTE
     };
 
     this.carritoService.agregarProducto(item);
     this.mensajeToast = `🛒 Se agregaron ${cantidadSeleccionada} unidades de "${producto.nombre}" al carrito`;
     this.cerrarModalProducto();
   }
+
 
 
   abrirModalProducto(producto: any) {

@@ -364,17 +364,22 @@
               <input
                 type="number"
                 min="1"
+                [max]="item.stock"
                 class="w-14 text-center border rounded-lg py-1 text-white"
                 [value]="item.cantidad"
                 (change)="actualizarCantidad(item.id_producto, +$event.target.value)"
               />
 
+              <p *ngIf="item.cantidad >= item.stock" class="text-red-400 text-xs mt-1">
+                Stock máximo alcanzado
+              </p>
+
               <button
                 class="p-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-                (click)="actualizarCantidad(item.id_producto, item.cantidad + 1)"
+                (click)="actualizarCantidad(item.id_producto, item.cantidad + 1)" [disabled]="item.cantidad >= item.stock"
               >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 -960 960 960" fill="#ffffff">
-                <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+                <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
               </svg>
 
               </button>

@@ -8,18 +8,36 @@ export class Carrito {
   private carrito = new BehaviorSubject<any[]>([]);
   carrito$ = this.carrito.asObservable();
 
-  agregarProducto(producto: any) {
-    const carritoActual = this.carrito.value;
-    const existente = carritoActual.find(p => p.id_producto === producto.id_producto);
+agregarProducto(producto: any) {
+  const carritoActual = this.carrito.value;
 
-    if (existente) {
-      existente.cantidad += producto.cantidad;
-    } else {
-      carritoActual.push({ ...producto });
-    }
+  const stockReal = Number(producto.stock ?? 0);
 
-    this.carrito.next([...carritoActual]);
+  if (stockReal <= 0) {
+    alert("⛔ Este producto no tiene stock disponible.");
+    return;
   }
+
+  const existente = carritoActual.find(p => p.id_producto === producto.id_producto);
+
+  if (existente) {
+    if (existente.cantidad + producto.cantidad > stockReal) {
+      alert("⛔ Stock insuficiente.");
+      return;
+    }
+    existente.cantidad += producto.cantidad;
+    existente.subtotal = existente.cantidad * existente.precio_venta;
+  } else {
+    carritoActual.push({
+      ...producto,
+      cantidad: producto.cantidad,
+      subtotal: producto.precio_venta * producto.cantidad
+    });
+  }
+
+  this.carrito.next([...carritoActual]);
+  localStorage.setItem('carrito', JSON.stringify(carritoActual));
+}
 
 
   eliminarProducto(id_producto: number) {
