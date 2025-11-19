@@ -1,13 +1,12 @@
 <div class="mx-20">
   <div class="flex items-center">
-    <h1 class="text-xl my-10">Gestión de promociones</h1>
+    <h1 class="text-xl text-white my-10">Gestión de banners</h1>
 
     <button (click)="abrirModalCrear()"
-            class="ml-auto text-sm bg-[#0B1120] text-white px-4 py-2 font-semibold cursor-pointer rounded-lg flex items-center gap-2 hover:bg-[#141c33] transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 -960 960 960" fill="#e3e3e3">
+            class="ml-auto text-sm bg-white text-black px-4 py-2 font-semibold cursor-pointer rounded-lg flex items-center gap-2 hover:bg-[#141c33] transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 -960 960 960" fill="#000000">
         <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
-      </svg>
-      Nueva promoción
+      </svg>Nuevo banner
     </button>
   </div>
 
@@ -16,12 +15,12 @@
     <table class="w-full text-sm text-left border border-gray-300 rounded-lg border-separate border-spacing-0">
       <thead>
         <tr>
-          <th class="px-4 py-3 font-semibold border-b border-gray-300 rounded-tl-lg">Título</th>
-          <th class="px-4 py-3 font-semibold border-b border-gray-300">Descripción</th>
-          <th class="px-4 py-3 font-semibold border-b border-gray-300">Fecha Inicio</th>
-          <th class="px-4 py-3 font-semibold border-b border-gray-300">Fecha Fin</th>
-          <th class="px-4 py-3 font-semibold border-b border-gray-300">Estado</th>
-          <th class="px-4 py-3 text-center font-semibold border-b border-gray-300 rounded-tr-lg">Acciones</th>
+          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300 rounded-tl-lg">Título</th>
+          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Descripción</th>
+          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Fecha Inicio</th>
+          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Fecha Fin</th>
+          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Estado</th>
+          <th class="px-4 py-3 text-center font-semibold border-b bg-white border-gray-300 rounded-tr-lg">Acciones</th>
         </tr>
       </thead>
 
@@ -68,7 +67,7 @@
     <button (click)="cerrarModal()" class="absolute top-3 right-3 text-gray-500 hover:text-black">✕</button>
 
     <h2 class="text-2xl font-semibold mb-6">
-      {{ promoEditando ? 'Editar promoción' : 'Nueva promoción' }}
+      {{ promoEditando ? 'Editar banner' : 'Nueva banner' }}
     </h2>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
