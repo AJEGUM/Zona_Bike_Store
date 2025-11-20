@@ -2,17 +2,48 @@
 
   <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
 
+    <div class="bg-white p-8 rounded-2xl shadow-xl">
+
+      <h2 class="text-lg font-semibold mb-6 text-gray-900">Resumen del Pedido</h2>
+
+      <!-- LISTA DE PRODUCTOS -->
+      <div *ngFor="let p of productos" class="flex justify-between mb-4">
+        <div>
+          <p class="font-medium text-gray-900">{{ p.cantidad }}× {{ p.nombre }}</p>
+          <p class="text-xs text-gray-500">
+            ${{ (p.cantidad * p.precio_unitario) | number:'1.0-0' }} COP
+          </p>
+        </div>
+        <span class="font-semibold text-gray-700">
+          {{ (p.cantidad * p.precio_unitario) | currency:'COP':'' }}
+        </span>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- SUBTOTAL -->
+      <div class="flex justify-between text-gray-700">
+        <span>Subtotal</span>
+        <span>{{ total | currency:'COP':'' }}</span>
+      </div>
+
+      <!-- TOTAL -->
+      <div class="flex justify-between text-xl font-semibold mt-5 text-gray-900">
+        <span>Total</span>
+        <span>{{ total | currency:'COP':'' }}</span>
+      </div>
+
+    </div>
+
     <!-- 🧾 INFORMACIÓN DE PAGO -->
     <div class="bg-[#1f2537] p-8 rounded-2xl shadow-xl text-white">
 
-      <h2 class="flex items-center gap-2 text-lg font-semibold mb-6">
-        <span class="material-icons">credit_card</span>
+      <h2 class="flex items-center gap-2 text-lg font-semibold mb-4">
         Información de Pago
       </h2>
 
-      <p class="text-gray-300 text-sm mb-6">
-        Serás redirigido automáticamente al finalizar el pago.
-      </p>
+      <hr class="mb-4">
+
       <!-- CAMPOS PARA PAGO (ESTILO DE LA IMAGEN) -->
       <div class="space-y-6">
 
@@ -85,41 +116,6 @@
         Pago seguro y encriptado
       </div>
 
-    </div>
-
-    <!-- 📦 RESUMEN DEL PEDIDO -->
-    <div class="bg-white p-8 rounded-2xl shadow-xl">
-
-      <h2 class="text-lg font-semibold mb-6 text-gray-900">Resumen del Pedido</h2>
-
-      <!-- LISTA DE PRODUCTOS -->
-      <div *ngFor="let p of productos" class="flex justify-between mb-4">
-        <div>
-          <p class="font-medium text-gray-900">{{ p.cantidad }}× {{ p.nombre }}</p>
-          <p class="text-xs text-gray-500">
-            ${{ (p.cantidad * p.precio_unitario) | number:'1.0-0' }} COP
-          </p>
-        </div>
-        <span class="font-semibold text-gray-700">
-          {{ (p.cantidad * p.precio_unitario) | currency:'COP':'' }}
-        </span>
-      </div>
-
-      <hr class="my-4">
-
-      <!-- SUBTOTAL -->
-      <div class="flex justify-between text-gray-700">
-        <span>Subtotal</span>
-        <span>{{ total | currency:'COP':'' }}</span>
-      </div>
-
-      <!-- TOTAL -->
-      <div class="flex justify-between text-xl font-semibold mt-5 text-gray-900">
-        <span>Total</span>
-        <span>{{ total | currency:'COP':'' }}</span>
-      </div>
-
-    </div>
-
+    </div>    
   </div>
 </div>
