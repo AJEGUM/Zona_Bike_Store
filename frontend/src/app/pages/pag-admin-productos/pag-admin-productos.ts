@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProductosService, Producto } from '../../services/productosServices/productos-services';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pag-admin-productos',
@@ -114,65 +115,139 @@ guardarProducto() {
     this.form.imagen = this.imagenBase64;
   }
 
-  // 🟢 Caso 1: CREAR
+  // 🟢 Caso 1: CREAR PRODUCTO
   if (!this.productoEditando) {
 
-    this.productosService.crearProducto(this.form).subscribe((nuevo: any) => {
+    this.productosService.crearProducto(this.form).subscribe({
+      next: (nuevo: any) => {
 
-      const id = nuevo.id_producto;
+        const id = nuevo.id_producto;
 
-      // Si hay imagen, subirla
-      if (this.imagenBase64) {
-        this.productosService
-          .subirImagenBase64(id, this.imagenBase64)
-          .subscribe(() => {
-            this.cargarProductos();
-            this.cerrarModal();
+        const finalizar = () => {
+          this.cargarProductos();
+          this.cerrarModal();
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto creado correctamente',
+            timer: 1500,
+            showConfirmButton: false
           });
+        };
 
-      } else {
-        // Si no hay imagen, solo recargar y cerrar
-        this.cargarProductos();
-        this.cerrarModal();
+        if (this.imagenBase64) {
+          this.productosService
+            .subirImagenBase64(id, this.imagenBase64)
+            .subscribe(finalizar);
+        } else {
+          finalizar();
+        }
+      },
+
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al crear el producto',
+          text: 'Revisa los datos e intenta nuevamente.'
+        });
       }
-
     });
 
-  } 
-  // 🔵 Caso 2: EDITAR
-  else {
-
-    const id = this.productoEditando.id_producto!;
-
-    this.productosService.actualizarProducto(id, this.form).subscribe(() => {
-
-      // Si se cambió la imagen, subirla
-      if (this.imagenBase64) {
-        this.productosService
-          .subirImagenBase64(id, this.imagenBase64)
-          .subscribe(() => {
-            this.cargarProductos();
-            this.cerrarModal();
-          });
-
-      } else {
-        // Si no se cambió imagen, solo recargar y cerrar
-        this.cargarProductos();
-        this.cerrarModal();
-      }
-
-    });
+    return;
   }
+
+  // 🔵 Caso 2: EDITAR PRODUCTO
+  const id = this.productoEditando.id_producto!;
+
+  this.productosService.actualizarProducto(id, this.form).subscribe({
+    next: () => {
+
+      const finalizar = () => {
+        this.cargarProductos();
+        this.cerrarModal();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Producto actualizado correctamente',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      };
+
+      if (this.imagenBase64) {
+        this.productosService
+          .subirImagenBase64(id, this.imagenBase64)
+          .subscribe(finalizar);
+      } else {
+        finalizar();
+      }
+    },
+
+    error: () => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el producto',
+        text: 'Intenta nuevamente.'
+      });
+    }
+  });
 }
 
 
-  eliminar(id: number) {
-    if (confirm('¿Seguro que quieres eliminar este producto?')) {
-      this.productosService.eliminarProducto(id).subscribe(() => {
-        this.productos = this.productos.filter(p => p.id_producto !== id);
+
+eliminar(id: number) {
+
+  Swal.fire({
+    title: '¿Eliminar producto?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      this.productosService.eliminarProducto(id).subscribe({
+        
+        next: () => {
+          // quitarlo de la lista
+          this.productos = this.productos.filter(p => p.id_producto !== id);
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto eliminado',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        },
+
+        error: (err) => {
+
+          if (err.status === 409) {
+            Swal.fire({
+              icon: 'error',
+              title: 'No se puede eliminar',
+              text: err.error.mensaje || 'Este producto está relacionado con ventas u otros registros.'
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error en el servidor',
+              text: 'No se pudo eliminar el producto.'
+            });
+          }
+
+        }
+
       });
     }
-  }
+
+  });
+
+}
 
   selectedCategoryName() {
     const cat = this.categorias.find(c => c.id_categoria === this.form.id_categoria);

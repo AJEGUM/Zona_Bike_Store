@@ -195,6 +195,39 @@ actualizarCantidad(id_producto: number, nuevaCantidad: number) {
     this.totalFormateado = this.carritoService.obtenerTotalFormateado();
   }
 
+procederAlPago() {
+  const payload = this.AuthService.decodificarToken(); // 👈 Verificar si hay usuario
+
+  if (!payload) {
+    this.cerrarCarrito();
+    this.mostrarAlerta("Debes iniciar sesión para continuar");
+    
+    // 👇 Abre el modal de login
+    setTimeout(() => this.abrirModal(), 300);
+    return;
+  }
+
+  // ✔ Si está logueado, genera los datos para la pasarela
+  const productosParaPagar = this.carrito.map(item => ({
+    id_producto: item.id_producto,
+    nombre: item.nombre,
+    cantidad: item.cantidad,
+    precio_unitario: item.precio_venta,
+    subtotal: item.cantidad * item.precio_venta
+  }));
+
+  const total = productosParaPagar.reduce((sum, p) => sum + p.subtotal, 0);
+
+  this.router.navigate(['/pago'], {
+    queryParams: {
+      productos: JSON.stringify(productosParaPagar),
+      total: total
+    }
+  });
+
+  this.cerrarCarrito();
+}
+
 
   obtenerImagen(item: any): string {
     if (item.imagen && item.imagen.startsWith('/9j/')) {

@@ -38,22 +38,32 @@
 
         <!-- BOTÓN / MENSAJE -->
         <div class="mt-4">
-          <!-- Mostrar solo si está activo -->
-            <button *ngIf="p.estado === 'activo'" 
-                    (click)="agregarAlCarrito(p, 1); $event.stopPropagation()"
-                    class="bg-[#442ED9] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full font-semibold">
-            Añadir al carrito
-            </button>
 
-
-          <!-- Mensaje si está inactivo -->
-          <div *ngIf="p.estado !== 'activo'"
-               class="w-full py-2 rounded-lg bg-[#2B3548] text-center text-gray-400 flex items-center justify-center gap-2 cursor-not-allowed">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+          <!-- SIN STOCK (stock = 0) -->
+          <div *ngIf="p.stock === 0"
+              class="w-full py-2 rounded-lg bg-[#2B3548] text-center text-gray-400 flex items-center justify-center gap-2 cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
             </svg>
-          No disponible
+            Sin stock
           </div>
+
+          <!-- NO DISPONIBLE (estado != activo) -->
+          <div *ngIf="p.stock > 0 && p.estado !== 'activo'"
+              class="w-full py-2 rounded-lg bg-[#2B3548] text-center text-gray-400 flex items-center justify-center gap-2 cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8 8 8-3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+            </svg>
+            No disponible
+          </div>
+
+          <!-- AÑADIR AL CARRITO (activo y con stock) -->
+          <button *ngIf="p.stock > 0 && p.estado === 'activo'"
+                  (click)="agregarAlCarrito(p, 1); $event.stopPropagation()"
+                  class="bg-[#442ED9] text-white px-4 py-2 rounded-lg hover:bg-gray-900 w-full font-semibold">
+            Añadir al carrito
+          </button>
+
         </div>
       </div>
     </div>
@@ -128,30 +138,67 @@
 
         <!-- CONTROLES -->
         <div class="mt-6">
-          <div class="flex items-center gap-3 mb-4" *ngIf="modalProducto.estado === 'activo'">
-            <span class="text-sm text-gray-100 font-medium">Cantidad</span>
-            <div class="flex items-center border rounded-lg">
-              <button class="px-3 py-1 text-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
-              <input type="number"
-                    [(ngModel)]="cantidad"
-                    min="1"
-                    class="w-12 text-center text-gray-100"
-                    (input)="cantidad = +$event.target.value" />
-              <button class="px-3 py-1 text-gray-100 rounded-r-lg" (click)="aumentarCantidad()">+</button>
+
+          <!-- ❌ SIN STOCK (con SVG) -->
+          <div *ngIf="modalProducto.stock === 0"
+              class="w-full py-3 bg-[#2B3548] text-center text-gray-300 rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
+
+            <!-- SVG de alerta -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+
+            Sin stock
+          </div>
+
+          <!-- ❌ NO DISPONIBLE POR ESTADO -->
+          <div *ngIf="modalProducto.stock > 0 && modalProducto.estado !== 'activo'"
+              class="w-full py-3 bg-[#2B3548] text-center text-gray-300 rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
+
+            <!-- SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+            </svg>
+
+            No disponible
+          </div>
+
+          <!-- ✔️ CONTROLES CUANDO HAY STOCK Y ESTA ACTIVO -->
+          <div *ngIf="modalProducto.stock > 0 && modalProducto.estado === 'activo'">
+            
+            <!-- Cantidad -->
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-sm text-gray-100 font-medium">Cantidad</span>
+
+              <div class="flex items-center border rounded-lg">
+                <button class="px-3 py-1 text-gray-100 rounded-l-lg" (click)="disminuirCantidad()">−</button>
+                
+                <input type="number"
+                      [(ngModel)]="cantidad"
+                      min="1"
+                      [max]="modalProducto.stock"
+                      class="w-12 text-center text-gray-100"
+                      (input)="cantidad = +$event.target.value" />
+                
+                <button class="px-3 py-1 text-gray-100 rounded-r-lg" 
+                        (click)="aumentarCantidad()"
+                        [disabled]="cantidad >= modalProducto.stock">
+                  +
+                </button>
+              </div>
             </div>
+
+            <!-- Botón añadir -->
+            <button 
+                    (click)="agregarAlCarrito(modalProducto, cantidad); cerrarModalProducto()"
+                    class="w-full bg-[#030213] text-white py-3 rounded-lg hover:bg-gray-900 font-medium flex items-center justify-center gap-2 transition">
+              🛒 Añadir al carrito
+            </button>
+
           </div>
 
-          <button *ngIf="modalProducto.estado === 'activo'" 
-                  (click)="agregarAlCarrito(modalProducto, cantidad); cerrarModalProducto()"
-                  class="w-full bg-[#030213] text-white py-3 rounded-lg hover:bg-gray-900 font-medium flex items-center justify-center gap-2 transition">
-            🛒 Añadir al carrito
-          </button>
-
-          <div *ngIf="modalProducto.estado !== 'activo'"
-               class="w-full py-3 bg-[#2B3548] text-center text-gray-300 rounded-lg flex items-center justify-center gap-2">
-            🚫 Producto no disponible
-          </div>
         </div>
+
       </div>
     </div>
   </div>

@@ -97,6 +97,19 @@ CREATE TABLE ventas (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
 
+CREATE TABLE pagos (
+    id_pago INT AUTO_INCREMENT PRIMARY KEY,
+    id_venta INT NOT NULL,
+    numero_tarjeta VARCHAR(20),
+    fecha_expiracion VARCHAR(7),
+    cvv VARCHAR(5),
+    ciudad VARCHAR(100),
+    pais VARCHAR(100),
+
+    FOREIGN KEY (id_venta) REFERENCES ventas(id_venta) ON DELETE CASCADE
+);
+
+
 CREATE TABLE detalle_ventas (
     id_detalle INT AUTO_INCREMENT PRIMARY KEY,
     id_venta INT NOT NULL,

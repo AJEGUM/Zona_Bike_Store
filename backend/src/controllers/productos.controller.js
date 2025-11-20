@@ -35,12 +35,19 @@ class Productos{
 
   async eliminarProducto(req, res) {
     try {
-      const { id } = req.params;
-      const result = await ServicesProductos.eliminarProducto(id);
-      res.json(result);
-    } catch (err) {
-      res.status(500).json({ error: 'Error al eliminar producto' });
-    }
+        const { id } = req.params;
+        const resultado = await ServicesProductos.eliminarProducto(id);
+        res.json(resultado);
+
+      } catch (error) {
+        console.error(error);
+
+        if (error.status === 409) {
+          return res.status(409).json({ mensaje: error.message });
+        }
+
+        res.status(500).json({ mensaje: 'Error al eliminar producto' });
+      }
   }
 
   async obtenerCategorias(req, res) {

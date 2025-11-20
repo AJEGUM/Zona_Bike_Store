@@ -71,11 +71,13 @@
                  px-3 py-2 rounded-lg transition"
           (click)="abrirModal()">
 
-          <svg xmlns="http://www.w3.org/2000/svg"
-               height="24px" width="24px" fill="#ffffff"
-               viewBox="0 -960 960 960">
-            <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Z"/>
-          </svg>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            role="img" aria-label="Usuario"
+            class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <title>Usuario</title>
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
           Iniciar sesión
         </button>
       </div>
@@ -95,13 +97,20 @@
         (click)="abrirCarrito()"
         class="px-3 rounded-lg  border border-gray-600 hover:bg-[#2B3548] transition cursor-pointer w-12 h-10">
 
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-8 text-white"
-             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-6-4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z" />
+        <svg xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1" stroke="white"/>
+          <circle cx="20" cy="21" r="1" stroke="white"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="white"/>
         </svg>
-      </button>
 
+      </button>
     </div>
   </div>
 </nav>
@@ -443,6 +452,7 @@
           Vaciar carrito
         </button>
         <button
+          (click)="procederAlPago()"
           class="flex-1 bg-[#030213] text-white py-2 rounded-lg hover:bg-gray-900 font-medium transition"
         >
           Proceder al pago

@@ -1,0 +1,125 @@
+<div class="min-h-screen bg-[#111827] flex justify-center items-center px-4 py-12">
+
+  <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- 🧾 INFORMACIÓN DE PAGO -->
+    <div class="bg-[#1f2537] p-8 rounded-2xl shadow-xl text-white">
+
+      <h2 class="flex items-center gap-2 text-lg font-semibold mb-6">
+        <span class="material-icons">credit_card</span>
+        Información de Pago
+      </h2>
+
+      <p class="text-gray-300 text-sm mb-6">
+        Serás redirigido automáticamente al finalizar el pago.
+      </p>
+      <!-- CAMPOS PARA PAGO (ESTILO DE LA IMAGEN) -->
+      <div class="space-y-6">
+
+        <!-- Número de Tarjeta -->
+        <div>
+          <label class="text-sm text-gray-300 mb-1 block">Número de Tarjeta</label>
+          <input type="text" maxlength="20" placeholder="1234 5678 9012 3456" [(ngModel)]="pago.numero_tarjeta"
+            class="w-full p-4 rounded-2xl bg-[#252b3d] text-gray-200 placeholder-gray-400 outline-none border border-transparent focus:border-indigo-400 transition">
+        </div>
+
+        <!-- Fecha - CVV -->
+        <div class="grid grid-cols-2 gap-4">
+
+          <!-- Fecha -->
+          <div>
+            <label class="text-sm text-gray-300 mb-1 block">Fecha de Expiración</label>
+            <input type="text" placeholder="MM/AA" maxlength="7" [(ngModel)]="pago.fecha_expiracion"
+              class="w-full p-4 rounded-2xl bg-[#252b3d] text-gray-200 placeholder-gray-400 outline-none border border-transparent focus:border-indigo-400 transition">
+          </div>
+
+          <!-- CVV -->
+          <div>
+            <label class="text-sm text-gray-300 mb-1 block">CVV</label>
+            <input type="text" maxlength="4" placeholder="123" [(ngModel)]="pago.cvv"
+              class="w-full p-4 rounded-2xl bg-[#252b3d] text-gray-200 placeholder-gray-400 outline-none border border-transparent focus:border-indigo-400 transition">
+          </div>
+
+        </div>
+
+        <!-- Ciudad -->
+        <div>
+          <label class="text-sm text-gray-300 mb-1 block">Ciudad</label>
+          <input type="text" [(ngModel)]="pago.ciudad"
+            class="w-full p-4 rounded-2xl bg-[#252b3d] text-gray-200 placeholder-gray-400 outline-none border border-transparent focus:border-indigo-400 transition">
+        </div>
+
+        <!-- País -->
+        <div>
+          <label class="text-sm text-gray-300 mb-1 block">País</label>
+          <input type="text" [(ngModel)]="pago.pais"
+            class="w-full p-4 rounded-2xl bg-[#252b3d] text-gray-200 placeholder-gray-400 outline-none border border-transparent focus:border-indigo-400 transition">
+        </div>
+
+      </div>
+
+
+
+      <!-- BOTÓN PAGAR -->
+      <button (click)="pagar()"
+        class="w-full mt-6 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-semibold p-4 rounded-xl transition">
+        Pagar ${{ total | number:'1.0-0' }} COP
+      </button>
+
+      <!-- BOTÓN REGRESAR -->
+      <button (click)="regresar()"
+        class="flex items-center gap-2 mt-4 mb-6 text-sm font-medium bg-white/10 hover:bg-white/20 text-gray-200 px-4 py-2 rounded-xl transition-all backdrop-blur-sm border border-white/10">
+
+        <!-- SVG FLECHA IZQUIERDA -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+
+        Regresar
+      </button>
+
+
+      <div class="text-center text-xs mt-3 opacity-70 flex justify-center items-center gap-1">
+        <span class="material-icons text-yellow-400 text-base">lock</span>
+        Pago seguro y encriptado
+      </div>
+
+    </div>
+
+    <!-- 📦 RESUMEN DEL PEDIDO -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl">
+
+      <h2 class="text-lg font-semibold mb-6 text-gray-900">Resumen del Pedido</h2>
+
+      <!-- LISTA DE PRODUCTOS -->
+      <div *ngFor="let p of productos" class="flex justify-between mb-4">
+        <div>
+          <p class="font-medium text-gray-900">{{ p.cantidad }}× {{ p.nombre }}</p>
+          <p class="text-xs text-gray-500">
+            ${{ (p.cantidad * p.precio_unitario) | number:'1.0-0' }} COP
+          </p>
+        </div>
+        <span class="font-semibold text-gray-700">
+          {{ (p.cantidad * p.precio_unitario) | currency:'COP':'' }}
+        </span>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- SUBTOTAL -->
+      <div class="flex justify-between text-gray-700">
+        <span>Subtotal</span>
+        <span>{{ total | currency:'COP':'' }}</span>
+      </div>
+
+      <!-- TOTAL -->
+      <div class="flex justify-between text-xl font-semibold mt-5 text-gray-900">
+        <span>Total</span>
+        <span>{{ total | currency:'COP':'' }}</span>
+      </div>
+
+    </div>
+
+  </div>
+</div>

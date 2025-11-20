@@ -32,7 +32,8 @@ export const routes: Routes = [
         .then(m => m.NavBar),
     children: [
       {path: '', loadComponent: () => import('./pages/pag-principal/pag-principal').then(m => m.PagPrincipal)},
-      {path: 'productos', loadComponent: () => import('./pages/pag-productos/pag-productos').then(m => m.PagProductos)}
+      {path: 'productos', loadComponent: () => import('./pages/pag-productos/pag-productos').then(m => m.PagProductos)},
+      { path: 'pago', loadComponent: () => import('./pages/pag-pasarela/pag-pasarela').then(m => m.PagPasarela) }
     ]
   }
 

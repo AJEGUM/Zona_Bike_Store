@@ -3,6 +3,7 @@ import { Promociones } from '../../services/promociones/promociones';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/AuthService/auth-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pag-admin-promociones',
@@ -89,8 +90,12 @@ export class PagAdminPromociones {
 
 guardar() {
 
- if (this.imagenInvalida) {
-    alert("No puedes guardar la promoción hasta que subas una imagen con las dimensiones mínimas.");
+  if (this.imagenInvalida) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Imagen inválida',
+      text: 'Debes subir una imagen con las dimensiones mínimas requeridas.'
+    });
     return;
   }
 
@@ -102,41 +107,108 @@ guardar() {
     estado: this.form.estado,
     posicion_texto: this.form.posicion_texto,
     id_usuario: this.id_usuario,
-    imagen: this.imagenBase64 ? this.imagenBase64.split(',')[1] : this.promoEditando?.imagen ?? null
+    imagen: this.imagenBase64
+      ? this.imagenBase64.split(',')[1]
+      : this.promoEditando?.imagen ?? null
   };
 
-  const accion = this.promoEditando 
+  const accion = this.promoEditando
     ? this.promoService.actualizarPromocion(this.promoEditando.id_promocion, payload)
     : this.promoService.crearPromocion(payload);
 
-  accion.subscribe((res: any) => {
-    const id = this.promoEditando ? this.promoEditando.id_promocion : res.promocion.id_promocion;
+  accion.subscribe({
+    next: (res: any) => {
+      const id = this.promoEditando
+        ? this.promoEditando.id_promocion
+        : res.promocion.id_promocion;
 
-    if (this.imagenBase64) {
-      const base64Data = this.imagenBase64.split(',')[1]; 
-      this.promoService.subirImagen(id, base64Data).subscribe(() => this.cargar());
-    } else {
+      // Si hay nueva imagen
+      if (this.imagenBase64) {
+        const base64Data = this.imagenBase64.split(',')[1];
+
+        this.promoService.subirImagen(id, base64Data).subscribe(() => {
+          this.cargar();
+          this.cerrarModal();
+
+          Swal.fire({
+            icon: 'success',
+            title: this.promoEditando ? 'Promoción actualizada' : 'Promoción creada',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        });
+
+        return;
+      }
+
+      // Si no se cambió la imagen
       this.cargar();
-    }
+      this.cerrarModal();
 
-    this.cerrarModal();
-  });
-}
+      Swal.fire({
+        icon: 'success',
+        title: this.promoEditando ? 'Promoción actualizada' : 'Promoción creada',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    },
 
-
-  eliminar(id: number) {
-    if (confirm('¿Seguro que quieres eliminar esta promoción?')) {
-      this.promoService.eliminarPromocion(id).subscribe(() => {
-        this.promociones = this.promociones.filter(p => p.id_promocion !== id);
+    error: () => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ocurrió un problema al guardar la promoción.'
       });
     }
-  }
+  });
 
+}
+
+eliminar(id: number) {
+
+  Swal.fire({
+    title: '¿Eliminar promoción?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      this.promoService.eliminarPromocion(id).subscribe({
+        next: () => {
+          this.promociones = this.promociones.filter(p => p.id_promocion !== id);
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Promoción eliminada',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        },
+
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'No se pudo eliminar',
+            text: 'La promoción puede estar relacionada con otros datos.'
+          });
+        }
+      });
+
+    }
+
+  });
+
+}
 
 imagenSeleccionada(evento: any) {
 
   const archivo = evento.target.files[0];
-
   this.imagenInvalida = false;
 
   if (!archivo) {
@@ -156,7 +228,12 @@ imagenSeleccionada(evento: any) {
       const altoMinimo = 400;
 
       if (imagen.width < anchoMinimo || imagen.height < altoMinimo) {
-        alert(`La imagen es muy pequeña. Debe medir mínimo ${anchoMinimo} x ${altoMinimo}px.`);
+
+        Swal.fire({
+          icon: 'warning',
+          title: 'Imagen demasiado pequeña',
+          text: `Debe medir al menos ${anchoMinimo} x ${altoMinimo}px.`
+        });
 
         this.imagenInvalida = true;
         evento.target.value = "";
@@ -166,14 +243,15 @@ imagenSeleccionada(evento: any) {
         return;
       }
 
-      // IMAGEN VÁLIDA
-      this.imagenBase64 = e.target.result; // esto sí se muestra en el preview
-      this.form.imagen = this.imagenBase64; // se guarda para enviar al backend
+      // Imagen válida
+      this.imagenBase64 = e.target.result;
+      this.form.imagen = this.imagenBase64;
     };
   };
 
   lector.readAsDataURL(archivo);
 }
+
 
 
 

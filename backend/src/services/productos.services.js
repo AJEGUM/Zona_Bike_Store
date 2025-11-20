@@ -143,23 +143,36 @@ async crearProducto(producto) {
 
 
 
- async eliminarProducto(id_producto) {
+async eliminarProducto(id_producto) {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
 
+    // eliminar stock
     await conn.query(`DELETE FROM stock_productos WHERE id_producto=?`, [id_producto]);
+
+    // intentar eliminar producto
     await conn.query(`DELETE FROM productos WHERE id_producto=?`, [id_producto]);
 
     await conn.commit();
     return { mensaje: 'Producto eliminado correctamente' };
+
   } catch (error) {
     await conn.rollback();
+
+    // detectar error por constraint FK
+    if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+      const e = new Error('No se puede eliminar: el producto está asociado a ventas, usuarios u otros registros.');
+      e.status = 409; // Conflicto
+      throw e;
+    }
+
     throw error;
   } finally {
     conn.release();
   }
 }
+
 
   async obtenerCategorias() {
     try {
