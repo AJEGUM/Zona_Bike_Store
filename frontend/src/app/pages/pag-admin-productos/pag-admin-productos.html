@@ -1,50 +1,81 @@
-<div class="mx-20">
-    <div class="flex items-center">
-      <h1 class="text-xl text-white my-10">Gestión de productos</h1>
-      <button (click)="abrirModalCrear()" class="ml-auto text-sm bg-white text-black px-4 py-2 font-semibold cursor-pointer rounded-lg flex items-center gap-2 hover: transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 -960 960 960" fill="#000000">
-      <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>Nuevo producto</button>
-    </div>
+<div class="px-4 sm:px-10 lg:px-20">
 
+  <!-- ENCABEZADO: Título + Botón -->
+  <div class="flex items-center mt-6 mb-4">
+    <h1 class="text-lg sm:text-xl text-white font-semibold">
+      Gestión de productos
+    </h1>
 
-  <div class="overflow-x-auto">
-    <table class="w-full text-sm text-left border border-gray-300 rounded-lg border-separate border-spacing-0">
+    <button
+      (click)="abrirModalCrear()"
+      class="ml-auto text-xs sm:text-sm bg-white text-black px-3 sm:px-4 py-2
+             font-medium rounded-lg flex items-center gap-2 shadow hover:bg-gray-100">
+
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5"
+        viewBox="0 -960 960 960" fill="currentColor">
+        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+      </svg>
+
+      Nuevo producto
+    </button>
+  </div>
+
+  <!-- TABLA SCROLLABLE Y BONITA -->
+  <div class="overflow-x-auto rounded-xl shadow">
+    <table class="min-w-[700px] w-full text-sm text-left bg-white rounded-xl">
       <thead>
-        <tr>
-          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300 rounded-tl-lg">Producto</th>
-          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Categoría</th>
-          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Marca</th>
-          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Precio</th>
-          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Stock</th>
-          <th class="px-4 py-3 font-semibold border-b bg-white border-gray-300">Estado</th>
-          <th class="px-4 py-3 text-center font-semibold bg-white border-b border-gray-300 rounded-tr-lg">Acciones</th>
+        <tr class="bg-white border-b border-gray-300">
+          <th class="px-4 py-3 font-semibold">Producto</th>
+          <th class="px-4 py-3 font-semibold">Categoría</th>
+          <th class="px-4 py-3 font-semibold">Marca</th>
+          <th class="px-4 py-3 font-semibold">Precio</th>
+          <th class="px-4 py-3 font-semibold">Stock</th>
+          <th class="px-4 py-3 font-semibold">Estado</th>
+          <th class="px-4 py-3 font-semibold text-center">Acciones</th>
         </tr>
       </thead>
 
-      <tbody class="bg-white divide-y divide-gray-200">
-        <tr *ngFor="let p of productos" class="hover:bg-gray-50 transition">
+      <tbody class="divide-y divide-gray-200">
+        <tr *ngFor="let p of productos" class="hover:bg-gray-50">
           <td class="px-4 py-3">{{ p.nombre }}</td>
           <td class="px-4 py-3">{{ p.categoria?.nombre || '-' }}</td>
           <td class="px-4 py-3">{{ p.marca?.nombre || '-' }}</td>
           <td class="px-4 py-3">${{ p.precio_venta }}</td>
           <td class="px-4 py-3">{{ p.stock }}</td>
           <td class="px-4 py-3">
-            <span class="px-2 py-1 rounded-md text-xs font-semibold"
-                  [ngClass]="{
-                    'bg-green-100 text-green-700': p.estado === 'activo',
-                    'bg-red-100 text-red-700': p.estado === 'inactivo'
-                  }">
+            <span
+              class="px-2 py-1 rounded-md text-xs font-semibold"
+              [ngClass]="{
+                'bg-green-100 text-green-700': p.estado === 'activo',
+                'bg-red-100 text-red-700': p.estado === 'inactivo'
+              }"
+            >
               {{ p.estado }}
             </span>
           </td>
           <td class="px-4 py-3 text-center">
-            <button (click)="abrirModalEditar(p)" class="cursor-pointer px-5" title="Editar"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M205-205h53l392-391.5-53.5-53.5L205-257.5v52.5Zm-75 75v-159l520-519.5q10.98-10.28 24.24-15.89Q687.5-830 702.47-830t29 5.75q14.03 5.75 25.03 16.75l52 52.5q11 10.5 16.25 24.25t5.25 28.02q0 15.23-5.14 28.67-5.14 13.44-16.36 24.56L289-130H130Zm625-572.5L702.5-755l52.5 52.5ZM623-623l-26.5-27 53.5 53.5-27-26.5Z"/></svg></button>
-            <button (click)="eliminar(p.id_producto!)" class="cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M283-130q-30.94 0-52.97-22.03Q208-174.06 208-205v-512h-39v-75h193v-38h237v38h193v75h-39v512q0 30.94-22.03 52.97Q708.94-130 678-130H283Zm395-587H283v512h395v-512ZM365-283.5h75v-355h-75v355Zm156 0h75v-355h-75v355ZM283-717v512-512Z"/></svg></button>
+            <button (click)="abrirModalEditar(p)" class="px-5 cursor-pointer" title="Editar">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="#000000">
+                <path
+                  d="M205-205h53l392-391.5-53.5-53.5L205-257.5v52.5Zm-75 75v-159l520-519.5q10.98-10.28 24.24-15.89Q687.5-830 702.47-830t29 5.75q14.03 5.75 25.03 16.75l52 52.5q11 10.5 16.25 24.25t5.25 28.02q0 15.23-5.14 28.67-5.14 13.44-16.36 24.56L289-130H130Zm625-572.5L702.5-755l52.5 52.5ZM623-623l-26.5-27 53.5 53.5-27-26.5Z" />
+              </svg>
+            </button>
+
+            <button (click)="eliminar(p.id_producto!)" class="cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="#EA3323">
+                <path
+                  d="M283-130q-30.94 0-52.97-22.03Q208-174.06 208-205v-512h-39v-75h193v-38h237v38h193v75h-39v512q0 30.94-22.03 52.97Q708.94-130 678-130H283Zm395-587H283v512h395v-512ZM365-283.5h75v-355h-75v355Zm156 0h75v-355h-75v355ZM283-717v512-512Z" />
+              </svg>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
 
 <!-- Modal: Crear / Editar Producto -->
 <div *ngIf="modalAbierto" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">

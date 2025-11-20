@@ -26,6 +26,8 @@
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "apexcharts": "^5.3.6",
+    "ng-apexcharts": "^2.0.3",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.26.3",
     "swiper": "^12.0.3",

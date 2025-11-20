@@ -15,6 +15,7 @@ export class NavBarAdmin {
 
   nombre: string = '';
   rol: string = '';
+  sidebar = false;
 
   constructor(private authService: AuthService) {}
 

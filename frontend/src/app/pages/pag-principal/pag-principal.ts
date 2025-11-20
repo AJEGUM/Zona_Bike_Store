@@ -79,7 +79,6 @@ export class PagPrincipal implements OnInit {
   }
 
 
-
   abrirModalProducto(producto: any) {
     this.modalProducto = producto;
     this.cantidad = 1;
