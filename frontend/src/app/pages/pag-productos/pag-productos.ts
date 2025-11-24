@@ -4,11 +4,12 @@ import { ProductosService } from '../../services/productosServices/productos-ser
 import { Carrito } from '../../services/carrito/carrito';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-pag-productos',
   standalone: true,
-  imports: [NavBar, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [NavBar, CommonModule, FormsModule, RouterModule, ReactiveFormsModule],
   templateUrl: './pag-productos.html',
   styles: ``,
 })

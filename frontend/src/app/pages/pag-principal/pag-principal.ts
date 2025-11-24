@@ -5,11 +5,12 @@ import { NavBar } from '../../components/nav-bar/nav-bar';
 import { Carrito } from '../../services/carrito/carrito';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BannerPromociones } from '../../components/banner-promociones/banner-promociones';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-pag-principal',
   standalone: true,
-  imports: [CommonModule, NavBar, FormsModule, ReactiveFormsModule, BannerPromociones],
+  imports: [CommonModule, NavBar, FormsModule, ReactiveFormsModule, RouterModule, BannerPromociones],
   templateUrl: './pag-principal.html',
   
 })
