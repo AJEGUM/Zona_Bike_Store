@@ -23,7 +23,6 @@ export class PagProductos {
   categoriasSeleccionadas: number[] = [];
   precioMin: number = 0;
   precioMax: number = 25000000;
-  soloDisponibles: boolean = false;
   terminoBusqueda: string = "";
 
   // Modal
@@ -175,16 +174,10 @@ export class PagProductos {
     this.aplicarFiltros();
   }
 
-  cambiarDisponibilidad() {
-    this.soloDisponibles = !this.soloDisponibles;
-    this.aplicarFiltros();
-  }
-
   limpiarFiltros() {
     this.categoriasSeleccionadas = [];
     this.precioMin = 0;
     this.precioMax = 25000000;
-    this.soloDisponibles = false;
     this.terminoBusqueda = "";
 
     this.productosFiltrados = this.productos;
@@ -203,16 +196,12 @@ export class PagProductos {
         prod.precio_venta >= this.precioMin &&
         prod.precio_venta <= this.precioMax;
 
-      // Stock (si tu API usa prod.stock)
-      const matchDisponibilidad =
-        !this.soloDisponibles || prod.stock > 0;
-
       // Búsqueda
       const matchBusqueda =
         !this.terminoBusqueda ||
         prod.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase());
 
-      return matchCategoria && matchPrecio && matchDisponibilidad && matchBusqueda;
+      return matchCategoria && matchPrecio && matchBusqueda;
     });
   }
 
@@ -221,7 +210,6 @@ export class PagProductos {
 
     if (this.categoriasSeleccionadas.length > 0) count++;
     if (this.precioMax !== 25000000) count++;
-    if (this.soloDisponibles) count++;
 
     return count;
   }

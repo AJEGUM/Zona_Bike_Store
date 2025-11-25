@@ -119,22 +119,6 @@
               <span>Hasta: {{ precioMax | currency:'COP' }}</span>
             </div>
           </div>
-
-          <!-- DISPONIBILIDAD -->
-          <div class="mb-4">
-            <p class="text-white font-medium mb-2">Disponibilidad</p>
-
-            <label class="text-white flex items-center gap-2 cursor-pointer">
-              <input 
-                type="checkbox"
-                class="w-4 h-4 rounded border-gray-300"
-                [(ngModel)]="soloDisponibles"
-                (change)="cambiarDisponibilidad()"
-              >
-              <span>Solo productos disponibles</span>
-            </label>
-          </div>
-
         </div>
       </div>
     </div>
@@ -332,14 +316,6 @@
         <span>{{ precioMin | currency:'COP' }}</span>
         <span>{{ precioMax | currency:'COP' }}</span>
       </div>
-    </div>
-
-    <!-- DISPONIBILIDAD -->
-    <div class="mb-6">
-      <label class="flex items-center gap-2">
-        <input type="checkbox" [(ngModel)]="soloDisponibles" (change)="cambiarDisponibilidad()">
-        Solo productos disponibles
-      </label>
     </div>
 
     <!-- BOTONES -->
