@@ -89,6 +89,7 @@ CREATE TABLE promociones (
     imagen LONGTEXT,
     fecha_inicio DATE,
     fecha_fin DATE,
+    posicion_texto VARCHAR(50) DEFAULT 'centro',
     estado ENUM('activa', 'inactiva') DEFAULT 'activa',
     id_usuario INT,
     foreign key (id_usuario) references usuarios(id_usuario)
