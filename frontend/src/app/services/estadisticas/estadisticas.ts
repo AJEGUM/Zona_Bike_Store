@@ -20,4 +20,13 @@ export class Estadisticas {
     let params = new HttpParams().set('inicio', inicio).set('fin', fin);
     return this.http.get(`${this.apiUrl}/ventas-por-periodo`, { params });
   }
+
+  obtenerVentasPorCategoriaMes(mes: number, anio: number, categoria: number): Observable<any> {
+    let params = new HttpParams()
+      .set('mes', mes.toString())
+      .set('anio', anio.toString())
+      .set('categoria', categoria.toString());
+
+    return this.http.get(`${this.apiUrl}/ventas-categoria-mes`, { params });
+  }
 }

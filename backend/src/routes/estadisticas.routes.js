@@ -6,4 +6,6 @@ router.get("/productos-mas-vendidos", (req, res) => StatsController.productosMas
 
 router.get("/ventas-por-periodo", (req, res) => StatsController.ventasPorPeriodo(req, res));
 
+router.get("/ventas-categoria-mes", (req, res) => StatsController.ventasPorCategoriaMes(req, res));
+
 module.exports = router;

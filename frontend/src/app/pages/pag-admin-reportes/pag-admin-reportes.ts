@@ -3,6 +3,7 @@ import { Estadisticas } from '../../services/estadisticas/estadisticas';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ProductosService } from '../../services/productosServices/productos-services';
 
 @Component({
   selector: 'app-pag-admin-reportes',
@@ -17,6 +18,26 @@ export class PagAdminReportes {
   productosData: number[] = [];
   listaProductos: any[] = [];
   sinRegistrosProductos = false;
+  categorias: any[] = [];
+  mes = '';
+  anio = '';
+  categoriaSeleccionada = '';
+  sinRegistrosCategoriaMes = false;
+
+  meses = [
+  { value: 1, nombre: 'Enero' },
+  { value: 2, nombre: 'Febrero' },
+  { value: 3, nombre: 'Marzo' },
+  { value: 4, nombre: 'Abril' },
+  { value: 5, nombre: 'Mayo' },
+  { value: 6, nombre: 'Junio' },
+  { value: 7, nombre: 'Julio' },
+  { value: 8, nombre: 'Agosto' },
+  { value: 9, nombre: 'Septiembre' },
+  { value: 10, nombre: 'Octubre' },
+  { value: 11, nombre: 'Noviembre' },
+  { value: 12, nombre: 'Diciembre' },
+];
 
   ventasLabels: string[] = [];
   ventasData: number[] = [];
@@ -24,10 +45,11 @@ export class PagAdminReportes {
   inicio = '';
   fin = '';
 
-  constructor(private statsService: Estadisticas) {}
+  constructor(private statsService: Estadisticas, private productosServices: ProductosService) {}
 
   ngOnInit() {
     this.cargarProductosMasVendidos();
+    this.cargarCategorias();
   }
 
   cargarProductosMasVendidos() {
@@ -85,7 +107,112 @@ cargarVentasPeriodo() {
     });
 }
 
+cargarCategorias() {
+  this.productosServices.obtenerCategorias().subscribe((data: any) => {
+    this.categorias = data;
+  });
+}
 
+cargarVentasPorCategoriaMes() {
+  this.sinRegistrosCategoriaMes = false;
+
+  if (!this.mes || !this.anio || !this.categoriaSeleccionada) {
+    alert("Debe seleccionar mes, año y categoría");
+    return;
+  }
+
+  this.statsService.obtenerVentasPorCategoriaMes(
+    Number(this.mes),
+    Number(this.anio),
+    Number(this.categoriaSeleccionada)
+  ).subscribe((res: any) => {
+
+    const data = res.data || [];
+
+    if (data.length === 0) {
+      this.sinRegistrosCategoriaMes = true;
+    }
+
+    this.ventasLabels = data.map((x: any) => x.producto);
+    this.ventasData = data.map((x: any) => Number(x.total));
+
+    this.chartBarOptions = {
+  ...this.chartBarOptions,
+  series: [
+    {
+      name: 'Ventas por categoría',
+      data: this.ventasData
+    }
+  ],
+
+  // 🔥 TOOLTIP PERSONALIZADO AQUÍ
+  tooltip: {
+    custom: (options: any) => {
+      const { dataPointIndex } = options;
+      const item = data[dataPointIndex];
+
+      return `
+        <div style="
+          background: white;
+          color: black;
+          padding: 10px;
+          border-radius: 8px;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+          font-size: 13px;
+        ">
+          <strong style="font-size:14px">${item.producto}</strong><br>
+          Cantidad: <b>${item.cantidad}</b><br>
+          Total: <b>$${Number(item.total).toLocaleString()}</b>
+        </div>
+      `;
+    }
+
+  },
+
+  xaxis: {
+    categories: this.ventasLabels
+  }
+};this.chartBarOptions = {
+  ...this.chartBarOptions,
+  series: [
+    {
+      name: 'Ventas por categoría',
+      data: this.ventasData
+    }
+  ],
+  tooltip: {
+    custom: (options: any) => {
+      const item = data[options.dataPointIndex];
+      return `
+        <div style="
+          background: white;
+          color: black;
+          padding: 10px;
+          border-radius: 8px;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+          font-size: 13px;
+        ">
+          <strong style="font-size:14px">${item.producto}</strong><br>
+          Cantidad: <b>${item.cantidad}</b><br>
+          Total: <b>$${Number(item.total).toLocaleString()}</b>
+        </div>
+      `;
+    }
+  },
+  xaxis: {
+    categories: this.ventasLabels,
+    labels: {
+      style: {
+        colors: '#fff'   // ← AQUI CAMBIAS EL COLOR
+      }
+    }
+  }
+};
+
+
+
+  });
+}
 
   totalProductos() {
     return this.productosData.reduce((a: number, b: number) => a + b, 0);
