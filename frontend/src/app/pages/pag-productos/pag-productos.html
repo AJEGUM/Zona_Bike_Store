@@ -87,20 +87,22 @@
           <div class="mb-6">
             <h3 class="font-medium text-white mb-2">Categorías</h3>
 
-            <div class="space-y-2">
+            <!-- CONTENEDOR CON SCROLL -->
+            <div class="space-y-2 max-h-56 overflow-y-auto pr-2">
               <label *ngFor="let cat of categorias"
-                     class="text-white flex items-center gap-2 cursor-pointer">
+                    class="text-white flex items-center gap-2 cursor-pointer">
 
-                    <input 
-                      type="checkbox"
-                      class="w-4 h-4"
-                      [checked]="categoriasSeleccionadas.includes(cat.id_categoria)"
-                      (change)="alternarCategoria(cat.id_categoria)"
-                    >
-                    <span>{{ cat.nombre }}</span>
+                <input 
+                  type="checkbox"
+                  class="w-4 h-4"
+                  [checked]="categoriasSeleccionadas.includes(cat.id_categoria)"
+                  (change)="alternarCategoria(cat.id_categoria)"
+                >
+                <span>{{ cat.nombre }}</span>
               </label>
             </div>
           </div>
+
 
           <!-- RANGO DE PRECIO (SOLO 1 SLIDER) -->
           <div class="mb-6">
@@ -274,7 +276,6 @@
 </div>
 
 <!-- Filtro modal responsive -->
- <!-- MODAL DE FILTROS (MÓVIL) -->
 <div *ngIf="modalFiltrosAbierto" 
      class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 lg:hidden">
 
@@ -282,7 +283,8 @@
   <div class="absolute inset-0" (click)="modalFiltrosAbierto = false"></div>
 
   <!-- Panel -->
-  <div class="relative bg-white w-full max-w-md rounded-xl shadow-lg p-5 z-10 animate-fade-in">
+  <div class="relative bg-white w-full max-w-md rounded-xl shadow-lg p-5 z-10 animate-fade-in max-h-[80vh] overflow-y-auto">
+
 
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-lg font-semibold">Filtros</h3>
@@ -293,7 +295,7 @@
     <div class="mb-6">
       <h4 class="font-medium mb-2">Categorías</h4>
 
-      <div class="space-y-2">
+      <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
         <label *ngFor="let cat of categorias" class="flex items-center gap-2">
           <input 
             type="checkbox" 
@@ -303,6 +305,7 @@
           {{ cat.nombre }}
         </label>
       </div>
+
     </div>
 
     <!-- PRECIO -->
