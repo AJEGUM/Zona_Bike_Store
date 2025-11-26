@@ -47,6 +47,10 @@ export class NavBar implements OnChanges {
       this.usuarioLogueado = payload.nombre;
       this.rolUsuario = payload.rol;
     }
+
+    console.log("TOKEN DECODIFICADO:", this.AuthService.decodificarToken());
+  console.log("ID USUARIO:", this.AuthService.obtenerIdUsuario());
+
   }
 
 

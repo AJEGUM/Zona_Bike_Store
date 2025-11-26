@@ -56,8 +56,10 @@ export class AuthService {
   }
 
   obtenerIdUsuario() {
-    return this.decodificarToken()?.id;
+    const payload = this.decodificarToken();
+    return payload?.id_usuario || payload?.id; // por si acaso
   }
+
 
   estaLogueado() {
     return !!this.obtenerToken();

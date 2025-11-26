@@ -92,10 +92,25 @@
 
 
       <!-- BOTÓN PAGAR -->
-      <button (click)="pagar()"
-        class="w-full mt-6 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-semibold p-4 rounded-xl transition">
-        Pagar ${{ total | number:'1.0-0' }} COP
+      <button 
+        (click)="pagar()"
+        [disabled]="cargando"
+        class="w-full mt-6 bg-[#4f46e5] hover:bg-[#4338ca] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold p-4 rounded-xl transition flex items-center justify-center gap-2">
+
+        <!-- Spinner SOLO cuando cargando = true -->
+        <svg *ngIf="cargando" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+          </path>
+        </svg>
+
+        <!-- Texto cambia cuando está cargando -->
+        <span>
+          {{ cargando ? 'Procesando...' : ('Pagar $' + (total | number:'1.0-0') + ' COP') }}
+        </span>
       </button>
+
 
       <!-- BOTÓN REGRESAR -->
       <button (click)="regresar()"

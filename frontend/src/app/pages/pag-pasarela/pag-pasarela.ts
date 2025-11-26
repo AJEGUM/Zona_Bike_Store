@@ -15,6 +15,7 @@ export class PagPasarela {
 
   productos: any[] = [];
   total: number = 0;
+  cargando = false;
 
   // Modelo para los datos de pago
   pago = {
@@ -45,18 +46,22 @@ export class PagPasarela {
   }
 
   pagar() {
+    this.cargando = true;
+
     const orden = {
       total: this.total,
       items: this.productos.map(p => ({
         id_producto: p.id_producto,
         cantidad: p.cantidad,
-        precio_unitario: p.precio_unitario
+        precio_unitario: p.precio_unitario,
+        nombre_producto: p.nombre
       })),
       pago: this.pago // INCORPORACIÓN DEL PAGO
     };
 
     this.pasarelaService.crearOrden(orden).subscribe({
       next: (res) => {
+        this.cargando = false;
         Swal.fire({
           icon: 'success',
           title: 'Pago realizado correctamente',
@@ -67,6 +72,7 @@ export class PagPasarela {
         this.router.navigate(['/']);
       },
       error: (err) => { 
+        this.cargando = false;
         Swal.fire({
           icon: 'error',
           title: 'Error al procesar el pago',

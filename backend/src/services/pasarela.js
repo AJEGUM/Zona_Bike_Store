@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const EmailService = require("./emails");
 
 class PagoService {
 
@@ -71,6 +72,23 @@ class PagoService {
     );
   }
 
+  async obtenerCorreoUsuario(idUsuario) {
+    const [[usuario]] = await db.query(
+      "SELECT nombre, email FROM usuarios WHERE id_usuario = ?",
+      [idUsuario]
+    );
+
+    if (!usuario || !usuario.email) {
+      throw new Error("El usuario no tiene email registrado.");
+    }
+
+    return {
+      nombre: usuario.nombre,
+      correo: usuario.email
+    };
+  }
+
+
   // 4️⃣ Función madre
   async procesarPago(data, idUsuario) {
     const { items, total } = data;
@@ -83,14 +101,20 @@ class PagoService {
       // Crear venta
       const idVenta = await this.crearVenta(idUsuario, total);
 
-      // Registrar detalles de venta
+      // Registrar detalles
       await this.registrarDetalleYActualizarStock(idVenta, items);
 
-      // Registrar pago con los campos correctos
+      // Registrar pago
       await this.registrarPago(idVenta, data);
 
+      // Obtener correo + nombre del usuario
+      const usuario = await this.obtenerCorreoUsuario(idUsuario);
+
+      // Enviar correo correctamente
+      await EmailService.enviarCorreoCompra(usuario, items, total);
+
       return {
-        mensaje: "Pago procesado correctamente.",
+        mensaje: "Pago procesado correctamente. Correo enviado.",
         id_venta: idVenta
       };
 
@@ -98,6 +122,9 @@ class PagoService {
       throw error;
     }
   }
+
+
+
 }
 
 module.exports = new PagoService();
