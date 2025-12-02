@@ -1,11 +1,13 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const db = require("../config/db");
+const EmailService = require("../services/emails");
 
 require("dotenv").config();
 
 // Función que verifica o crea y retorna usuario con rol incluido
 async function findOrCreateUser(nombre, email) {
+  let esNuevo = false;
 
   // Buscar usuario con JOIN para traer rol_nombre
   const [rows] = await db.query(
@@ -17,7 +19,7 @@ async function findOrCreateUser(nombre, email) {
   );
 
   if (rows.length > 0) {
-    return rows[0];
+    return { user: rows[0], esNuevo };
   }
 
   // Crear usuario nuevo (rol cliente = 2)
@@ -25,6 +27,8 @@ async function findOrCreateUser(nombre, email) {
     "INSERT INTO usuarios (nombre, email, clave, id_rol) VALUES (?, ?, ?, ?)",
     [nombre, email, null, 2]
   );
+
+  esNuevo = true;
 
   // Volver a consultar con JOIN
   const [nuevo] = await db.query(
@@ -35,8 +39,9 @@ async function findOrCreateUser(nombre, email) {
     [result.insertId]
   );
 
-  return nuevo[0];
+  return { user: nuevo[0], esNuevo };
 }
+
 
 // Configuración de Google OAuth2
 passport.use(
@@ -51,7 +56,14 @@ passport.use(
         const nombre = profile.displayName;
         const email = profile.emails[0].value;
 
-        const user = await findOrCreateUser(nombre, email);
+        const { user, esNuevo } = await findOrCreateUser(nombre, email);
+
+        console.log("Usuario que recibe correo:", user);
+
+        if (esNuevo) {
+          await EmailService.enviarCorreoBienvenida(user);
+        }
+
         return done(null, user);
       } catch (error) {
         return done(error, null);

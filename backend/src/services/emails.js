@@ -22,14 +22,34 @@ class EmailService {
 
     // 3. Enviar correo
     await transporter.sendMail({
-      from: `"Bike Store" <${process.env.EMAIL_USER}>`,
-      to: usuario.correo,
+      from: `"Zona Bike Store" <${process.env.EMAIL_USER}>`,
+      to: usuario.email,
       subject: "Compra registrada con éxito",
       html
     });
 
     return true;
   }
+
+  async enviarCorreoBienvenida(usuario) {
+  // 1. Leer plantilla
+  const templatePath = path.join(__dirname, "../templates/bienvenida.html");
+  let html = fs.readFileSync(templatePath, "utf8");
+
+  // 2. Reemplazar datos dinámicos
+  html = html.replace("{{nombre}}", usuario.nombre);
+
+  // 3. Enviar correo
+  await transporter.sendMail({
+    from: `"Zona Bike Store" <${process.env.EMAIL_USER}>`,
+    to: usuario.email,
+    subject: "¡Bienvenido a Bike Store!",
+    html
+  });
+
+  return true;
+}
+
 }
 
 module.exports = new EmailService();
