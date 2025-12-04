@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
 import { Carrito } from '../../services/carrito/carrito';
 import { UsuariosService } from '../../services/usuarios/usuarios';
 import { AuthService } from '../../services/AuthService/auth-service';
@@ -31,25 +31,93 @@ export class NavBar implements OnChanges {
   usuarioLogueado = '';
   rolUsuario = '';
 
+  formLogin!: FormGroup;
+  formRegistro!: FormGroup;
+
+
   @Input() mensajeExterno: string | null = null;
   @Output() searchChanged = new EventEmitter<string>();
 
-  constructor(public carritoService: Carrito, private usuarioServices: UsuariosService, private AuthService: AuthService, private router: Router) {
-    this.carritoService.carrito$.subscribe(items => {
-      this.carrito = items;
-      this.totalFormateado = this.carritoService.obtenerTotalFormateado();
+  constructor(
+    public carritoService: Carrito,
+    private usuarioServices: UsuariosService,
+    private AuthService: AuthService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+
+    this.formLogin = this.fb.group({
+      email: ['', this.validaciones.email],
+      clave: ['', [Validators.required]]
+    });
+
+    this.formRegistro = this.fb.group({
+      nombre: ['', this.validaciones.nombre],
+      correo: ['', this.validaciones.email],
+      clave: ['', this.validaciones.clave]
     });
   }
 
+
+  validaciones = {
+    nombre: [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\s]+$/)],
+    email: [Validators.required, Validators.pattern(/^[\w\.-]+@[\w\.-]+\.\w{2,4}$/)],
+    clave: [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*\d).{8,}$/)]
+  };
+
+  get control() {
+    return this.isLogin ? this.formLogin.controls : this.formRegistro.controls;
+  }
+
+  get controlEmail() {
+    return this.isLogin
+      ? this.formLogin.get('email')
+      : this.formRegistro.get('correo');
+  }
+
+  // Funcion general para validar
+  validarInput(event: KeyboardEvent, tipo: string) {
+    const char = event.key;
+
+    const patrones: any = {
+      letras: /^[a-zA-ZÀ-ÿ\s]$/,                       // solo letras y espacios
+      numeros: /^[0-9]$/,                              // solo números
+      alfanumerico: /^[a-zA-Z0-9À-ÿ\s]$/,              // letras + números
+      email: /^[a-zA-Z0-9@._-]$/,                      // caracteres permitidos en email
+      busqueda: /^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]$/,          // para tu buscador
+    };
+
+    const patron = patrones[tipo];
+
+    if (patron && !patron.test(char)) {
+      event.preventDefault(); // si no coincide → bloquear
+    }
+  }
+
+  soloLetras(event: KeyboardEvent) {
+  const char = event.key;
+
+  // Letras, espacio y acentos permitidos
+  const regex = /^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]$/;
+
+  if (!regex.test(char)) {
+    event.preventDefault(); // Bloquea el carácter
+  }
+}
+
+
   ngOnInit() {
+    this.carritoService.carrito$.subscribe((productos) => {
+      this.carrito = productos;
+      this.totalFormateado = this.carritoService.obtenerTotalFormateado();
+    });
+
     const payload = this.AuthService.decodificarToken();
     if (payload) {
       this.usuarioLogueado = payload.nombre;
       this.rolUsuario = payload.rol;
     }
   }
-
-
 
   // 👇 Esta función detecta cuando cambia el mensaje desde el padre
   ngOnChanges(changes: SimpleChanges) {
@@ -67,20 +135,26 @@ export class NavBar implements OnChanges {
   }
 
   abrirmenu() { this.menuOpen = !this.menuOpen; }
+
   cerrarmenu() { this.menuOpen = false; }
+
   onSearchChange() { this.searchChanged.emit(this.searchTerm); }
 
   abrirModal() { this.modalOpen = true; }
+
   abrirModalDesdeMenu() { this.cerrarmenu(); setTimeout(() => this.abrirModal(), 200); }
+
   cerrarModal() {
     this.modalOpen = false;
     this.isLogin = true;
-    this.nombre = this.email = this.clave = '';
+    this.formLogin.reset();
+    this.formRegistro.reset();
   }
 
   toggleForm() {
     this.isLogin = !this.isLogin;
-    this.nombre = this.email = this.clave = '';
+    this.formLogin.reset();
+    this.formRegistro.reset();
   }
 
 login() {
@@ -122,31 +196,36 @@ logout() {
   this.rolUsuario = '';
 }
 
-  register() {
-      if (!this.nombre || !this.email || !this.clave) return;
+register() {
+  if (this.formRegistro.invalid) {
+    this.formRegistro.markAllAsTouched();
+    return;
+  }
 
-      const payload = {
-        nombre: this.nombre,
-        email: this.email,
-        clave: this.clave,
-        id_rol: 2
-      };
+  const payload = {
+    nombre: this.formRegistro.value.nombre,
+    email: this.formRegistro.value.correo,
+    clave: this.formRegistro.value.clave,
+    id_rol: 2
+  };
 
-      this.usuarioServices.crearUsuario(payload).subscribe({
-        next: (resp: any) => {
-          this.mostrarAlerta('Usuario registrado correctamente');
-          this.cerrarModal();
-        },
-        error: (err) => {
-          this.mostrarAlerta('Error al registrar');
-        }
-      });
+  this.usuarioServices.crearUsuario(payload).subscribe({
+    next: () => {
+      this.mostrarAlerta('Usuario registrado correctamente');
+      this.cerrarModal();
+    },
+    error: () => {
+      this.mostrarAlerta('Error al registrar');
     }
+  });
+}
+
 
   abrirCarrito() {
     this.carritoOpen = true;
     document.body.style.overflow = 'hidden'; // 🚫 Desactiva el scroll del fondo
   }
+
   cerrarCarrito() {
     this.carritoOpen = false;
     document.body.style.overflow = ''; // ✅ Restaura el scroll normal

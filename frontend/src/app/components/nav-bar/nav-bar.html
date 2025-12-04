@@ -31,6 +31,7 @@
           placeholder="Buscar productos..."
           [(ngModel)]="searchTerm"
           (ngModelChange)="onSearchChange()"
+          (keypress)="validarInput($event, 'busqueda')"
           class="w-full pl-10 pr-4 py-2 rounded-xl bg-[#2B3548] text-white border border-gray-700
                  placeholder-gray-500 focus:outline-none"
         />
@@ -197,18 +198,24 @@
 
     <!-- Tabs -->
     <div class="flex justify-center bg-[#353D5A] rounded-full mb-6 p-1">
-      <button (click)="isLogin = true" [ngClass]="isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
-        class="flex-1 py-2 rounded-full font-medium transition">
+      <button (click)="isLogin = true" 
+              [ngClass]="isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
+              class="flex-1 py-2 rounded-full font-medium transition">
         Iniciar Sesión
       </button>
-      <button (click)="isLogin = false" [ngClass]="!isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
-        class="flex-1 py-2 rounded-full font-medium transition">
+
+      <button (click)="isLogin = false" 
+              [ngClass]="!isLogin ? 'bg-white shadow text-black' : 'text-gray-500'"
+              class="flex-1 py-2 rounded-full font-medium transition">
         Registrarse
       </button>
     </div>
 
     <!-- FORMULARIO -->
-    <form (ngSubmit)="isLogin ? login() : register()" class="space-y-4">
+    <form [formGroup]="isLogin ? formLogin : formRegistro"
+          (ngSubmit)="isLogin ? login() : register()"
+          class="space-y-4">
+
       <!-- Icono -->
       <div class="flex items-center justify-center text-gray-100 mb-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24"
@@ -219,27 +226,88 @@
         <span class="text-sm text-white">{{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}</span>
       </div>
 
-      <!-- Campos -->
+      <!-- NOMBRE (solo registro) -->
       <div *ngIf="!isLogin">
-        <input type="text" placeholder="Tu nombre" [(ngModel)]="nombre" name="nombre"
-          class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
+        <input type="text"
+              placeholder="Tu nombre"
+              formControlName="nombre"
+              (keypress)="validarInput($event, 'letras')"
+              class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg 
+                      focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
+
+        <!-- VALIDACIONES -->
+        <div *ngIf="control['nombre'].touched || control['nombre'].dirty"
+            class="text-red-400 text-sm mt-1">
+
+          <div *ngIf="control['nombre'].errors?.['required']">
+            El nombre es obligatorio.
+          </div>
+
+          <div *ngIf="control['nombre'].errors?.['pattern']">
+            Solo se permiten letras.
+          </div>
+
+        </div>
       </div>
 
+      <!-- Correo login -->
+      <div *ngIf="isLogin">
+        <input type="text"
+              placeholder="correo@gmail.com"
+              formControlName="email"
+              (keypress)="validarInput($event, 'email')"
+              class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg placeholder:text-gray-400" />
+
+        <div *ngIf="formLogin.get('email')?.touched" class="text-red-400 text-sm mt-1">
+          <div *ngIf="formLogin.get('email')?.errors?.['required']">El correo es obligatorio.</div>
+          <div *ngIf="formLogin.get('email')?.errors?.['pattern']">Formato de correo inválido.</div>
+        </div>
+      </div>
+
+      <!-- Correo registro -->
+      <div *ngIf="!isLogin">
+        <input type="text"
+              placeholder="correo@gmail.com"
+              formControlName="correo"
+              (keypress)="validarInput($event, 'email')"
+              class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg placeholder:text-gray-400" />
+
+        <div *ngIf="formRegistro.get('correo')?.touched" class="text-red-400 text-sm mt-1">
+          <div *ngIf="formRegistro.get('correo')?.errors?.['required']">El correo es obligatorio.</div>
+          <div *ngIf="formRegistro.get('correo')?.errors?.['pattern']">Formato de correo inválido.</div>
+        </div>
+      </div>
+
+      <!-- CONTRASEÑA -->
       <div>
-        <input type="email" placeholder="tu@email.com" [(ngModel)]="email" name="email"
-          class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
+        <input type="password"
+              placeholder="Contraseña"
+              formControlName="clave"
+              class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg 
+                      focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
+
+        <!-- VALIDACIONES -->
+        <div *ngIf="control['clave'].dirty" class="text-red-400 text-sm mt-1">
+
+          <div *ngIf="control['clave'].errors?.['required']">
+            La contraseña es obligatoria.
+          </div>
+
+          <div *ngIf="control['clave'].errors?.['pattern']">
+            Debe tener mínimo 8 caracteres, una mayúscula y un número.
+          </div>
+
+        </div>
       </div>
 
-      <div>
-        <input type="password" placeholder="Contraseña" [(ngModel)]="clave" name="password"
-          class="w-full px-4 py-2 text-white bg-[#353D5A] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700 placeholder:text-gray-400" />
-      </div>
 
+      <!-- BOTÓN -->
       <button type="submit"
         class="w-full bg-[#030213] text-white py-2 rounded-lg hover:bg-gray-900 transition font-medium">
         {{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}
       </button>
 
+      <!-- Google -->
       <button 
         type="button"
         (click)="loginGoogle()"
@@ -260,6 +328,7 @@
     </p>
   </div>
 </div>
+
 
 <!-- 🛒 MODAL CARRITO (Responsive: móvil + escritorio) -->
 <div
