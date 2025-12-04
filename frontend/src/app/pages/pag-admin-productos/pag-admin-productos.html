@@ -1,24 +1,56 @@
 <div class="px-4 sm:px-10 lg:px-20">
 
   <!-- ENCABEZADO: Título + Botón -->
-  <div class="flex items-center mt-6 mb-4">
+    <div class="flex items-center mt-6 mb-4">
     <h1 class="text-lg sm:text-xl text-white font-semibold">
       Gestión de productos
     </h1>
 
-    <button
-      (click)="abrirModalCrear()"
-      class="ml-auto text-xs sm:text-sm bg-white text-black px-3 sm:px-4 py-2
-             font-medium rounded-lg flex items-center gap-2 shadow hover:bg-gray-100">
+    <!-- Empuja todo lo que viene DESPUÉS del título hacia la derecha -->
+    <div class="ml-auto flex items-center gap-3">
 
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5"
-        viewBox="0 -960 960 960" fill="currentColor">
-        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
-      </svg>
+      <button
+        (click)="abrirModalCategorias()"
+        class="text-xs sm:text-sm bg-white text-black px-3 sm:px-4 py-2
+              font-medium rounded-lg flex items-center gap-2 shadow hover:bg-gray-100">
 
-      Nuevo producto
-    </button>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5"
+          viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+        </svg>
+
+        Nueva categoría
+      </button>
+
+      <button
+        (click)="abrirModalMarcas()"
+        class="text-xs sm:text-sm bg-white text-black px-3 sm:px-4 py-2
+              font-medium rounded-lg flex items-center gap-2 shadow hover:bg-gray-100">
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5"
+          viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+        </svg>
+
+        Nueva marca
+      </button>
+
+      <button
+        (click)="abrirModalCrear()"
+        class="text-xs sm:text-sm bg-white text-black px-3 sm:px-4 py-2
+              font-medium rounded-lg flex items-center gap-2 shadow hover:bg-gray-100">
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5"
+          viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+        </svg>
+
+        Nuevo producto
+      </button>
+
+    </div>
   </div>
+
 
   <!-- TABLA SCROLLABLE Y BONITA -->
   <div class="overflow-x-auto rounded-xl shadow">
@@ -239,5 +271,171 @@
       </form>
 
     </div>
+  </div>
+</div>
+
+<!-- Modal de Categorías -->
+<div
+  *ngIf="modalCategorias"
+  class="fixed inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center z-50 p-4"
+>
+
+  <div class="bg-white w-full max-w-4xl rounded-xl shadow-lg p-6 relative 
+              max-h-[90vh] overflow-y-auto">
+
+    <!-- Botón cerrar -->
+    <button 
+      (click)="cerrarModalCategorias()" 
+      class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+    >
+      ✕
+    </button>
+
+    <h2 class="text-2xl font-semibold mb-6">
+      Gestión de Categorías
+    </h2>
+
+    <!-- GRID HORIZONTAL -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- ================= PANEL IZQUIERDO ================= -->
+      <div class="rounded-xl border shadow-sm p-4 bg-gray-50 h-[60vh] overflow-y-auto">
+
+        <h3 class="font-semibold text-lg mb-3">Lista de categorías</h3>
+
+        <ul class="space-y-2">
+          <li
+            *ngFor="let c of categorias"
+            class="bg-white px-3 py-2 rounded-md shadow flex justify-between items-center"
+          >
+            {{ c.nombre }}
+
+            <div class="flex gap-3 text-xs">
+              <button class="text-blue-600" (click)="editarCategoria(c)">Editar</button>
+              <button class="text-red-600" (click)="eliminarCategoria(c.id_categoria)">Eliminar</button>
+            </div>
+          </li>
+        </ul>
+
+      </div>
+
+      <!-- ================= PANEL DERECHO ================= -->
+      <div class="rounded-xl border shadow-sm p-4 bg-white">
+
+        <h3 class="font-semibold text-lg mb-4">
+          {{ categoriaEditando ? "Editar categoría" : "Nueva categoría" }}
+        </h3>
+
+        <label class="block mb-2 font-medium">Nombre</label>
+
+        <input
+          [ngModel]="categoriaEditando ? categoriaEditando.nombre : nuevaCategoria"
+          (ngModelChange)="categoriaEditando ? categoriaEditando.nombre = $event : nuevaCategoria = $event"
+          type="text"
+          class="w-full border rounded-lg px-3 py-2"
+        />
+
+        <div class="flex justify-end mt-6 gap-3">
+          <button 
+            class="px-4 py-2 border rounded-lg hover:bg-gray-100" 
+            (click)="cerrarModalCategorias()">
+            Cancelar
+          </button>
+
+          <button 
+            class="px-4 py-2 bg-[#0B1120] text-white rounded-lg hover:bg-[#141c33]"
+            (click)="categoriaEditando ? guardarEdicionCategoria() : crearCategoria()"
+          >
+            Guardar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal de Marcas -->
+<div
+  *ngIf="modalMarcas"
+  class="fixed inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center z-50 p-4"
+>
+
+  <div class="bg-white w-full max-w-4xl rounded-xl shadow-lg p-6 relative 
+              max-h-[90vh] overflow-y-auto">
+
+    <!-- Botón cerrar -->
+    <button 
+      (click)="cerrarModalMarcas()" 
+      class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+    >
+      ✕
+    </button>
+
+    <h2 class="text-2xl font-semibold mb-6">
+      Gestión de Marcas
+    </h2>
+
+    <!-- GRID HORIZONTAL -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- ================= PANEL IZQUIERDO ================= -->
+      <div class="rounded-xl border shadow-sm p-4 bg-gray-50 h-[60vh] overflow-y-auto">
+
+        <h3 class="font-semibold text-lg mb-3">Lista de marcas</h3>
+
+        <ul class="space-y-2">
+          <li
+            *ngFor="let m of marcas"
+            class="bg-white px-3 py-2 rounded-md shadow flex justify-between items-center"
+          >
+            {{ m.nombre }}
+
+            <div class="flex gap-3 text-xs">
+              <button class="text-blue-600" (click)="editarMarca(m)">Editar</button>
+              <button class="text-red-600" (click)="eliminarMarca(m.id_marca)">Eliminar</button>
+            </div>
+          </li>
+        </ul>
+
+      </div>
+
+      <!-- ================= PANEL DERECHO ================= -->
+      <div class="rounded-xl border shadow-sm p-4 bg-white">
+
+        <h3 class="font-semibold text-lg mb-4">
+          {{ marcaEditando ? "Editar marca" : "Nueva marca" }}
+        </h3>
+
+        <label class="block mb-2 font-medium">Nombre</label>
+
+        <input
+          [ngModel]="marcaEditando ? marcaEditando.nombre : nuevaMarca"
+          (ngModelChange)="marcaEditando ? marcaEditando.nombre = $event : nuevaMarca = $event"
+          type="text"
+          class="w-full border rounded-lg px-3 py-2"
+        />
+
+        <div class="flex justify-end mt-6 gap-3">
+          <button 
+            class="px-4 py-2 border rounded-lg hover:bg-gray-100" 
+            (click)="cerrarModalMarcas()">
+            Cancelar
+          </button>
+
+          <button 
+            class="px-4 py-2 bg-[#0B1120] text-white rounded-lg hover:bg-[#141c33]"
+            (click)="marcaEditando ? guardarEdicionMarca() : crearMarca()"
+          >
+            Guardar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 </div>

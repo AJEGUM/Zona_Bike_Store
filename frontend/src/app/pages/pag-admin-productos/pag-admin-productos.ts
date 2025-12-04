@@ -3,6 +3,8 @@ import { ProductosService, Producto } from '../../services/productosServices/pro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { Marcas } from '../../services/marcas/marcas';
+import { Categorias } from '../../services/categorias/categorias';
 
 @Component({
   selector: 'app-pag-admin-productos',
@@ -15,6 +17,15 @@ export class PagAdminProductos {
   productos: Producto[] = [];
   categorias: any[] = [];
   marcas: any[] = [];
+  nuevaCategoria: string = '';
+  categoriaEditando: any = null;
+  modalCategorias = false;
+  modalMarcas = false;
+
+
+  nuevaMarca: string = '';
+  marcaEditando: any = null;
+
 
   imagenBase64: string | null = null;
 
@@ -34,7 +45,7 @@ export class PagAdminProductos {
   };
 
 
-  constructor(private productosService: ProductosService) {}
+  constructor(private productosService: ProductosService, private marcasServices: Marcas, private categoriasServices: Categorias) {}
 
   ngOnInit() {
     this.cargarProductos();
@@ -248,6 +259,193 @@ eliminar(id: number) {
   });
 
 }
+
+crearCategoria() {
+  if (!this.nuevaCategoria.trim()) return;
+
+  this.categoriasServices.crearCategoria({ nombre: this.nuevaCategoria }).subscribe({
+    next: () => {
+      this.cargarCategorias();
+      this.nuevaCategoria = '';
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Categoría creada',
+        timer: 1400,
+        showConfirmButton: false
+      });
+    }
+  });
+}
+
+editarCategoria(cat: any) {
+  this.categoriaEditando = { ...cat };
+}
+
+guardarEdicionCategoria() {
+  this.categoriasServices.actualizarCategoria(
+    this.categoriaEditando.id_categoria,
+    { nombre: this.categoriaEditando.nombre }
+  ).subscribe({
+    
+    next: () => {
+      this.categoriaEditando = null;
+      this.cargarCategorias();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Categoría actualizada',
+        timer: 1400,
+        showConfirmButton: false
+      });
+    }
+  });
+}
+
+eliminarCategoria(id: number) {
+
+  Swal.fire({
+    title: '¿Eliminar categoría?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then(result => {
+
+    if (result.isConfirmed) {
+      this.categoriasServices.eliminarCategoria(id).subscribe({
+
+        next: () => {
+          this.cargarCategorias();
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Categoría eliminada',
+            timer: 1300,
+            showConfirmButton: false
+          });
+        },
+
+        error: (err) => {
+          console.error("Error al eliminar categoría:", err);
+
+          // Si el backend envía error 400 (relaciones)
+          if (err.status === 400) {
+            Swal.fire({
+              icon: 'error',
+              title: 'No se puede eliminar',
+              text: err.error.error || 'La categoría está asociada a productos.'
+            });
+            return;
+          }
+
+          // Error general
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un problema al eliminar la categoría.'
+          });
+        }
+
+      });
+    }
+
+  });
+
+}
+
+
+crearMarca() {
+  if (!this.nuevaMarca.trim()) return;
+
+  this.marcasServices.crearMarca({ nombre: this.nuevaMarca }).subscribe({
+    next: () => {
+      this.cargarMarcas();
+      this.nuevaMarca = '';
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Marca creada',
+        timer: 1300,
+        showConfirmButton: false
+      });
+    }
+  });
+}
+
+editarMarca(marca: any) {
+  this.marcaEditando = { ...marca };
+}
+
+guardarEdicionMarca() {
+  this.marcasServices.actualizarMarca(
+    this.marcaEditando.id_marca,
+    { nombre: this.marcaEditando.nombre }
+  ).subscribe({
+    next: () => {
+      this.marcaEditando = null;
+      this.cargarMarcas();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Marca actualizada',
+        timer: 1300,
+        showConfirmButton: false
+      });
+    }
+  });
+}
+
+eliminarMarca(id: number) {
+  Swal.fire({
+    title: '¿Eliminar marca?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then(result => {
+
+    if (result.isConfirmed) {
+      this.marcasServices.eliminarMarca(id).subscribe({
+        
+        next: () => {
+          this.cargarMarcas();
+          Swal.fire('Eliminado', 'La marca fue eliminada', 'success');
+        },
+
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'No se puede eliminar',
+            text: err.error?.error || "La marca está asociada a productos."
+          });
+        }
+
+      });
+    }
+
+  });
+}
+
+
+abrirModalCategorias() {
+  this.modalCategorias = true;
+}
+
+cerrarModalCategorias() {
+  this.modalCategorias = false;
+  this.categoriaEditando = null;
+}
+
+abrirModalMarcas() {
+  this.modalMarcas = true;
+}
+
+cerrarModalMarcas() {
+  this.modalMarcas = false;
+  this.marcaEditando = null;
+}
+
 
   selectedCategoryName() {
     const cat = this.categorias.find(c => c.id_categoria === this.form.id_categoria);
