@@ -230,12 +230,15 @@ procederAlPago() {
 
 
   obtenerImagen(item: any): string {
-    if (item.imagen && item.imagen.startsWith('/9j/')) {
-      return `data:image/jpeg;base64,${item.imagen}`;
-    }
-    if (item.imagen && (item.imagen.startsWith('http') || item.imagen.startsWith('assets/'))) {
+    if (!item.imagen) return 'assets/placeholder-producto.png';
+
+    // Si ya viene completa con "data:image"
+    if (item.imagen.startsWith('data:image')) {
       return item.imagen;
     }
-    return 'assets/placeholder-producto.png';
+
+    // Si viene solo el base64 crudo (ej: /9j/..)
+    return 'data:image/jpeg;base64,' + item.imagen;
   }
+
 }
