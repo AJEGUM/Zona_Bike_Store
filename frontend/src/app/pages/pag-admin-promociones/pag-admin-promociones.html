@@ -126,13 +126,13 @@
         <div>
           <label class="block font-medium">Título</label>
           <input type="text" [(ngModel)]="form.titulo" name="titulo"
-                class="w-full border rounded-lg px-3 py-2" required />
+                class="w-full border rounded-lg px-3 py-2" (keypress)="soloLetrasNumeros($event)" required />
         </div>
 
         <div>
           <label class="block font-medium">Descripción</label>
           <textarea [(ngModel)]="form.descripcion" name="descripcion"
-                    class="w-full border rounded-lg px-3 py-2 min-h-[80px]"></textarea>
+                    class="w-full border rounded-lg px-3 py-2 min-h-[80px]" (keypress)="soloLetrasNumeros($event)"></textarea>
         </div>
 
         <div>

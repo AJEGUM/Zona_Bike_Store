@@ -155,7 +155,6 @@
           <img *ngIf="imagenBase64 || form.imagen"
                [src]="imagenBase64 ? ('data:image/jpeg;base64,' + imagenBase64) : form.imagen"
                class="w-full h-full object-cover" />
-
           <span *ngIf="!form.imagen && !imagenBase64" class="text-gray-400 text-sm">
             Vista previa
           </span>
@@ -173,37 +172,40 @@
           <p class="font-semibold text-gray-900 text-lg">
             {{ form.precio_venta ? ('$' + form.precio_venta) : 'Precio' }}
           </p>
-          <span class="text-gray-500 text-sm">Stock: 0</span>
+          <span class="text-gray-500 text-sm">Stock: {{ form.stock || 0 }}</span>
         </div>
 
       </div>
 
-      <!-- ✅ FORMULARIO -->
-      <form (ngSubmit)="guardarProducto()" class="space-y-4">
+      <!-- FORMULARIO REACTIVO -->
+      <form [formGroup]="formProducto" (ngSubmit)="guardarProducto()" class="space-y-4">
 
         <!-- Nombre -->
         <div>
           <label class="block font-medium">Nombre</label>
-          <input type="text" [(ngModel)]="form.nombre" name="nombre"
-                 class="w-full border rounded-lg px-3 py-2" required />
+          <input type="text" formControlName="nombre" 
+                (keypress)="soloLetrasNumeros($event)"
+                class="w-full border rounded-lg px-3 py-2" />
+          <small class="text-red-500 text-sm" *ngIf="formProducto.get('nombre')?.invalid && formProducto.get('nombre')?.touched">
+            Nombre obligatorio y solo letras/números
+          </small>
         </div>
 
         <!-- Descripción -->
         <div>
           <label class="block font-medium">Descripción</label>
-          <textarea [(ngModel)]="form.descripcion" name="descripcion"
-                    class="w-full border rounded-lg px-3 py-2 min-h-[80px]"></textarea>
+          <textarea formControlName="descripcion"
+                    class="w-full border rounded-lg px-3 py-2 min-h-[80px]" (keypress)="soloLetrasNumeros($event)"></textarea>
+          <small class="text-red-500 text-sm" *ngIf="formProducto.get('descripcion')?.invalid && formProducto.get('descripcion')?.touched">
+            Descripción obligatoria
+          </small>
         </div>
 
         <!-- Imagen -->
         <div>
           <label class="block font-medium">Imagen (Archivo)</label>
-
-          <input type="file"
-                 accept="image/*"
-                 (change)="onFileSelected($event)"
+          <input type="file" accept="image/*" (change)="onFileSelected($event)"
                  class="w-full border rounded-lg px-3 py-2">
-
           <small class="text-gray-500">
             Si editas y no seleccionas una imagen nueva, se mantendrá la actual.
           </small>
@@ -212,43 +214,55 @@
         <!-- Precio -->
         <div>
           <label class="block font-medium">Precio</label>
-          <input type="number" [(ngModel)]="form.precio_venta" name="precio"
-                 class="w-full border rounded-lg px-3 py-2" required />
+          <input type="number" formControlName="precio_venta"
+                 class="w-full border rounded-lg px-3 py-2" />
+          <small class="text-red-500 text-sm" *ngIf="formProducto.get('precio_venta')?.invalid && formProducto.get('precio_venta')?.touched">
+            Precio obligatorio y mayor o igual a 0
+          </small>
         </div>
 
+        <!-- Stock -->
         <div>
           <label class="block font-medium">Stock</label>
-          <input type="number" [(ngModel)]="form.stock" name="stock"
-                class="w-full border rounded-lg px-3 py-2" required />
+          <input type="number" formControlName="stock"
+                 class="w-full border rounded-lg px-3 py-2" />
+          <small class="text-red-500 text-sm" *ngIf="formProducto.get('stock')?.invalid && formProducto.get('stock')?.touched">
+            Stock obligatorio y mayor o igual a 0
+          </small>
         </div>
-
 
         <!-- Categoría -->
         <div>
           <label class="block font-medium">Categoría</label>
-          <select [(ngModel)]="form.id_categoria" name="id_categoria"
-                  class="w-full border rounded-lg px-3 py-2" required>
+          <select formControlName="id_categoria"
+                  class="w-full border rounded-lg px-3 py-2">
             <option *ngFor="let c of categorias" [value]="c.id_categoria">
               {{ c.nombre }}
             </option>
           </select>
+          <small class="text-red-500 text-sm" *ngIf="formProducto.get('id_categoria')?.invalid && formProducto.get('id_categoria')?.touched">
+            Selecciona una categoría
+          </small>
         </div>
 
         <!-- Marca -->
         <div>
           <label class="block font-medium">Marca</label>
-          <select [(ngModel)]="form.id_marca" name="id_marca"
-                  class="w-full border rounded-lg px-3 py-2" required>
+          <select formControlName="id_marca"
+                  class="w-full border rounded-lg px-3 py-2">
             <option *ngFor="let m of marcas" [value]="m.id_marca">
               {{ m.nombre }}
             </option>
           </select>
+          <small class="text-red-500 text-sm" *ngIf="formProducto.get('id_marca')?.invalid && formProducto.get('id_marca')?.touched">
+            Selecciona una marca
+          </small>
         </div>
 
         <!-- Estado -->
         <div>
           <label class="block font-medium">Estado</label>
-          <select [(ngModel)]="form.estado" name="estado"
+          <select formControlName="estado"
                   class="w-full border rounded-lg px-3 py-2">
             <option value="activo">Activo</option>
             <option value="inactivo">Inactivo</option>
@@ -261,7 +275,6 @@
                   class="px-4 py-2 border rounded-lg hover:bg-gray-100">
             Cancelar
           </button>
-
           <button type="submit"
                   class="px-4 py-2 bg-[#0B1120] text-white rounded-lg hover:bg-[#141c33]">
             {{ productoEditando ? 'Actualizar' : 'Registrar' }}
@@ -273,6 +286,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- Modal de Categorías -->
 <div
@@ -333,6 +347,7 @@
           (ngModelChange)="categoriaEditando ? categoriaEditando.nombre = $event : nuevaCategoria = $event"
           type="text"
           class="w-full border rounded-lg px-3 py-2"
+          (keypress)="soloLetras($event)"
         />
 
         <div class="flex justify-end mt-6 gap-3">
@@ -416,6 +431,7 @@
           (ngModelChange)="marcaEditando ? marcaEditando.nombre = $event : nuevaMarca = $event"
           type="text"
           class="w-full border rounded-lg px-3 py-2"
+          (keypress)="soloLetras($event)"
         />
 
         <div class="flex justify-end mt-6 gap-3">

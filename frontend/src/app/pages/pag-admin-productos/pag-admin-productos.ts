@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ProductosService, Producto } from '../../services/productosServices/productos-services';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Marcas } from '../../services/marcas/marcas';
 import { Categorias } from '../../services/categorias/categorias';
@@ -9,7 +9,7 @@ import { Categorias } from '../../services/categorias/categorias';
 @Component({
   selector: 'app-pag-admin-productos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './pag-admin-productos.html',
 })
 export class PagAdminProductos {
@@ -44,14 +44,58 @@ export class PagAdminProductos {
     stock: 0
   };
 
+  formProducto!: FormGroup;
 
-  constructor(private productosService: ProductosService, private marcasServices: Marcas, private categoriasServices: Categorias) {}
+  validaciones = {
+    nombre: [Validators.required, Validators.pattern(/^[a-zA-ZÁÉÍÓÚáéíóúÑñ0-9\s]+$/)],
+    descripcion: [Validators.required],
+    precio_venta: [Validators.required, Validators.min(0)],
+    stock: [Validators.required, Validators.min(0)],
+    id_categoria: [Validators.required],
+    id_marca: [Validators.required],
+    estado: [Validators.required]
+  };
+
+  constructor(
+    private fb: FormBuilder,
+    private productosService: ProductosService,
+    private marcasServices: Marcas,
+    private categoriasServices: Categorias
+  ) {
+    this.formProducto = this.fb.group({
+      nombre: ['', this.validaciones.nombre],
+      descripcion: ['', this.validaciones.descripcion],
+      precio_venta: [0, this.validaciones.precio_venta],
+      stock: [0, this.validaciones.stock],
+      id_categoria: [0, this.validaciones.id_categoria],
+      id_marca: [0, this.validaciones.id_marca],
+      estado: ['activo', this.validaciones.estado]
+    });
+  }
 
   ngOnInit() {
     this.cargarProductos();
     this.cargarCategorias();
     this.cargarMarcas();
   }
+
+  soloNumeros(event: KeyboardEvent) {
+    const char = event.key;
+    if (!/^[0-9]$/.test(char)) event.preventDefault();
+  }
+
+  soloLetras(event: KeyboardEvent) {
+    const char = event.key;
+    if (!/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s]$/.test(char)) event.preventDefault();
+  }
+
+  soloLetrasNumeros(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/;
+    if (!regex.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
 
   // ✅ Cargar datos
   cargarProductos() {

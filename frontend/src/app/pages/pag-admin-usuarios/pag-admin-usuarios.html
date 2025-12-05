@@ -86,19 +86,31 @@
 
       <div>
         <label class="font-medium">Nombre</label>
-        <input type="text" [(ngModel)]="form.nombre" name="nombre" class="w-full border px-3 py-2 rounded-lg" required>
+        <input type="text" [(ngModel)]="form.nombre" name="nombre" (keypress)="soloLetras($event)" class="w-full border px-3 py-2 rounded-lg" required>
       </div>
 
       <div>
         <label class="font-medium">Email</label>
-        <input type="email" [(ngModel)]="form.email" name="email" class="w-full border px-3 py-2 rounded-lg" required>
+        <input type="email" [(ngModel)]="form.email" name="email"
+              class="w-full border px-3 py-2 rounded-lg"
+              (ngModelChange)="validarEmail()"
+              (keypress)="soloPermitidos($event)" required>
+
+        <p *ngIf="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
       </div>
+
 
       <div>
         <label class="font-medium">Clave</label>
-        <input type="password" [(ngModel)]="form.clave" name="clave" class="w-full border px-3 py-2 rounded-lg"
-          [required]="!editando" placeholder="{{ editando ? 'Dejar vacío para no cambiar' : '' }}">
+        <input type="password" [(ngModel)]="form.clave" name="clave"
+              class="w-full border px-3 py-2 rounded-lg"
+              [required]="!editando"
+              placeholder="{{ editando ? 'Dejar vacío para no cambiar' : '' }}"
+              (ngModelChange)="validarClaveVisual()">
+
+        <p *ngIf="claveError" class="text-red-500 text-sm mt-1">{{ claveError }}</p>
       </div>
+
 
       <div>
         <label class="font-medium">Rol</label>

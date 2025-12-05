@@ -43,6 +43,13 @@ export class PagAdminPromociones {
     this.cargar();
   }
 
+  soloLetrasNumeros(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/;
+    if (!regex.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
   cargar() {
     this.promoService.listarPromociones().subscribe((data: any) => {
       this.promociones = data;
