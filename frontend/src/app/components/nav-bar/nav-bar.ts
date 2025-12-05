@@ -5,6 +5,8 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, FormGroup } 
 import { Carrito } from '../../services/carrito/carrito';
 import { UsuariosService } from '../../services/usuarios/usuarios';
 import { AuthService } from '../../services/AuthService/auth-service';
+import { Recuperacion } from '../../services/recuperacion/recuperacion';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-nav-bar',
@@ -31,6 +33,17 @@ export class NavBar implements OnChanges {
   usuarioLogueado = '';
   rolUsuario = '';
 
+  modalRecuperarOpen = false;
+  pasoRecuperacion = 1;
+
+  emailRecuperacion = '';
+  codigoIngresado = '';
+  nuevaClave = '';
+
+  emailGuardado = ''; // Para el flujo completo
+  cargando: boolean = false;
+
+
   formLogin!: FormGroup;
   formRegistro!: FormGroup;
 
@@ -43,7 +56,8 @@ export class NavBar implements OnChanges {
     private usuarioServices: UsuariosService,
     private AuthService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private recuperacionService: Recuperacion
   ) {
 
     this.formLogin = this.fb.group({
@@ -150,6 +164,101 @@ export class NavBar implements OnChanges {
     this.formLogin.reset();
     this.formRegistro.reset();
   }
+
+  mostrarCarga(mensaje: string = "Procesando...") {
+    Swal.fire({
+      title: mensaje,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+  }
+
+  cerrarCarga() {
+    Swal.close();
+  }
+
+
+  abrirModalRecuperar() {
+    this.modalRecuperarOpen = true;
+    this.pasoRecuperacion = 1;
+    this.emailRecuperacion = '';
+    this.codigoIngresado = '';
+    this.nuevaClave = '';
+  }
+
+  cerrarModalRecuperacion() {
+    this.modalRecuperarOpen = false;
+  }
+
+
+  enviarCodigo() {
+    if (!this.emailRecuperacion || !/^[\w.-]+@[\w.-]+\.\w{2,4}$/.test(this.emailRecuperacion)) {
+      this.mostrarAlerta("Correo inválido");
+      return;
+    }
+
+    this.mostrarCarga("Enviando código...");
+
+    this.recuperacionService.enviarCodigo(this.emailRecuperacion).subscribe({
+      next: () => {
+        this.cerrarCarga();
+        this.emailGuardado = this.emailRecuperacion;
+        this.pasoRecuperacion = 2;
+        this.mostrarAlerta("Código enviado a tu correo");
+      },
+      error: () => {
+        this.cerrarCarga();
+        this.mostrarAlerta("No se pudo enviar el código");
+      }
+    });
+  }
+
+  validarCodigo() {
+    if (!this.codigoIngresado) {
+      this.mostrarAlerta("Ingresa el código");
+      return;
+    }
+
+    this.mostrarCarga("Validando código...");
+
+    this.recuperacionService.validarCodigo(this.emailGuardado, this.codigoIngresado)
+      .subscribe({
+        next: () => {
+          this.cerrarCarga();
+          this.pasoRecuperacion = 3;
+          this.mostrarAlerta("Código validado");
+        },
+        error: () => {
+          this.cerrarCarga();
+          this.mostrarAlerta("Código incorrecto");
+        }
+      });
+  }
+
+  guardarNuevaClave() {
+    if (!this.nuevaClave || this.nuevaClave.length < 6) {
+      this.mostrarAlerta("La contraseña debe tener mínimo 6 caracteres");
+      return;
+    }
+
+    this.mostrarCarga("Guardando contraseña...");
+
+    this.recuperacionService.cambiarPassword(this.emailGuardado, this.nuevaClave)
+      .subscribe({
+        next: () => {
+          this.cerrarCarga();
+          this.mostrarAlerta("Contraseña actualizada");
+          this.cerrarModalRecuperacion();
+        },
+        error: () => {
+          this.cerrarCarga();
+          this.mostrarAlerta("Error al actualizar la contraseña");
+        }
+      });
+  }
+
 
   toggleForm() {
     this.isLogin = !this.isLogin;

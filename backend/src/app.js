@@ -26,6 +26,7 @@ app.use("/api/categorias", require("./routes/categorias.routes"));
 app.use("/api/marcas", require("./routes/marcas.routes"));
 app.use("/api/promociones", require("./routes/promociones.routes"));
 app.use('/api/roles', require('./routes/roles.routes'));
+app.use("/api/recuperacion", require("./routes/recuperacion.routes"));
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
 
 module.exports = app;

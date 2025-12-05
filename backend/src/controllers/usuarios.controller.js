@@ -103,6 +103,20 @@ class UsuariosController {
     }
   }
 
+  // Obtener usuario por email (función auxiliar)
+  async obtenerUsuarioPorEmail(email) {
+    try {
+      const [rows] = await db.query(
+        "SELECT * FROM usuarios WHERE email = ?",
+        [email]
+      );
+      return rows.length ? rows[0] : null;
+    } catch (error) {
+      console.error("Error al obtener usuario por email:", error);
+      return null;
+    }
+  }
+
   // Eliminar usuario
   async eliminarUsuario(req, res) {
     const { id } = req.params;
