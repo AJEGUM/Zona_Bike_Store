@@ -2,6 +2,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const db = require("../config/db");
 const EmailService = require("../services/emails");
+const jwt = require('jsonwebtoken');
 
 require("dotenv").config();
 
@@ -58,18 +59,29 @@ passport.use(
 
         const { user, esNuevo } = await findOrCreateUser(nombre, email);
 
-        console.log("Usuario que recibe correo:", user);
-
         if (esNuevo) {
           await EmailService.enviarCorreoBienvenida(user);
         }
 
-        return done(null, user);
+        // 🔹 Generamos el token aquí y lo devolvemos directamente
+        const token = jwt.sign(
+          {
+            id_usuario: user.id_usuario,
+            nombre: user.nombre,
+            rol: user.rol_nombre
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: "7d" }
+        );
+
+        // Devolver solo el token, no un objeto con user
+        return done(null, { token });
       } catch (error) {
         return done(error, null);
       }
     }
   )
 );
+
 
 module.exports = passport;

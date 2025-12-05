@@ -84,7 +84,7 @@ class PagoService {
 
     return {
       nombre: usuario.nombre,
-      correo: usuario.email
+      email: usuario.email
     };
   }
 

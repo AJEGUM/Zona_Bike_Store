@@ -12,13 +12,17 @@ export class Pasarela {
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
-  crearOrden(data: any): Observable<any> {
+  crearOrden(data: any, idUsuario: number): Observable<any> {
     const token = this.auth.obtenerToken();
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
 
-    return this.http.post(`${this.apiUrl}/crear-orden`, data, { headers });
+    // Agregamos idUsuario al payload
+    const body = { ...data, idUsuario };
+
+    return this.http.post(`${this.apiUrl}/crear-orden`, body, { headers });
   }
+
 }

@@ -158,12 +158,16 @@ export class NavBar implements OnChanges {
   }
 
 login() {
-  if (!this.email || !this.clave) return;
+  if (this.formLogin.invalid) {
+    this.formLogin.markAllAsTouched();
+    this.mostrarAlerta('Revisa tus campos');
+    return;
+  }
 
-  this.AuthService.iniciarSesion(this.email, this.clave).subscribe({
+  const { email, clave } = this.formLogin.value;
+
+  this.AuthService.iniciarSesion(email, clave).subscribe({
     next: (resp: any) => {
-
-      localStorage.setItem('token', resp.token);
       this.AuthService.guardarToken(resp.token);
 
       const payload = this.AuthService.decodificarToken();
@@ -184,6 +188,7 @@ login() {
     }
   });
 }
+
 
 loginGoogle() {
   window.location.href = "http://localhost:3000/api/auth/google";

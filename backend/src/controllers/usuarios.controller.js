@@ -1,5 +1,7 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
+const EmailService = require('../services/emails');
+
 
 class UsuariosController {
   // Obtener todos los usuarios con su rol
@@ -20,16 +22,19 @@ class UsuariosController {
   async agregarUsuario(req, res) {
     const { nombre, email, clave, id_rol } = req.body;
     try {
+      // 1️⃣ Encriptar la contraseña
       const hash = await bcrypt.hash(clave, 10);
 
+      // 2️⃣ Insertar usuario en la DB
       const [result] = await db.query(
         'INSERT INTO usuarios (nombre, email, clave, id_rol) VALUES (?, ?, ?, ?)',
         [nombre, email, hash, id_rol]
       );
 
-      // Obtener el nombre del rol
+      // 3️⃣ Obtener el nombre del rol usando la función auxiliar
       const rolNombre = await this.obtenerNombreRol(id_rol);
 
+      // 4️⃣ Construir objeto usuario
       const nuevoUsuario = {
         id_usuario: result.insertId,
         nombre,
@@ -37,11 +42,23 @@ class UsuariosController {
         rol: rolNombre
       };
 
+      // 5️⃣ Enviar correo de bienvenida
+      try {
+        await EmailService.enviarCorreoBienvenida(nuevoUsuario);
+        console.log('Correo de bienvenida enviado a', email);
+      } catch (err) {
+        console.error('Error al enviar correo de bienvenida:', err.message);
+      }
+
+      // 6️⃣ Devolver usuario registrado
       res.json(nuevoUsuario);
+
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: 'Error al agregar usuario' });
     }
   }
+
 
   async editarUsuario(req, res) {
     const { id } = req.params;

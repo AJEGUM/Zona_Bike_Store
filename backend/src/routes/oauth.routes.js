@@ -15,20 +15,10 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
-    const token = jwt.sign(
-      {
-        id: req.user.id_usuario,
-        nombre: req.user.nombre,
-        email: req.user.email,
-        rol: req.user.rol_nombre, 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    // Redirige al frontend con el token
+    const token = req.user.token; // ahora sí existe
     res.redirect(`${process.env.FRONTEND_URL}/oauth-callback?token=${token}`);
   }
 );
+
 
 module.exports = router;
