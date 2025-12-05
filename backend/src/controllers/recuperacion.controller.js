@@ -30,8 +30,6 @@ async restablecerClave(req, res) {
     try {
         const { email, nuevaClave } = req.body;
 
-        console.log("CLAVE RECIBIDA:", nuevaClave);
-
         const hashedClave = await bcrypt.hash(nuevaClave, 10);
 
         // Actualizar en la BD
@@ -43,8 +41,6 @@ async restablecerClave(req, res) {
         if (!usuario) {
             return res.status(400).json({ mensaje: "Usuario no encontrado para enviar correo." });
         }
-
-        console.log("HASH GENERADO:", hashedClave);
 
         // Enviar correo de confirmación
         await EmailService.enviarCorreoCambioClave(usuario);

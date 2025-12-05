@@ -95,6 +95,13 @@ CREATE TABLE promociones (
     foreign key (id_usuario) references usuarios(id_usuario)
 );
 
+CREATE TABLE recuperacion_clave (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(300) NOT NULL,
+    codigo VARCHAR(6) NOT NULL,
+    expiracion DATETIME NOT NULL,
+    usado TINYINT DEFAULT 0
+);
 -- ===========================
 --      TABLA USUARIOS
 -- ===========================
