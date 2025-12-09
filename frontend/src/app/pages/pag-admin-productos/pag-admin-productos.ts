@@ -32,17 +32,6 @@ export class PagAdminProductos {
   modalAbierto = false;
   productoEditando: Producto | null = null;
 
-  form: Producto = {
-    id_producto: undefined,
-    nombre: '',
-    descripcion: '',
-    precio_venta: 0,
-    imagen: '',
-    id_categoria: 0,
-    id_marca: 0,
-    estado: 'activo',
-    stock: 0
-  };
 
   formProducto!: FormGroup;
 
@@ -67,9 +56,10 @@ export class PagAdminProductos {
       descripcion: ['', this.validaciones.descripcion],
       precio_venta: [0, this.validaciones.precio_venta],
       stock: [0, this.validaciones.stock],
-      id_categoria: [0, this.validaciones.id_categoria],
-      id_marca: [0, this.validaciones.id_marca],
-      estado: ['activo', this.validaciones.estado]
+      id_categoria: [null, this.validaciones.id_categoria],
+      id_marca: [null, this.validaciones.id_marca],
+      estado: ['activo', this.validaciones.estado],
+      imagen: ['']
     });
   }
 
@@ -124,39 +114,41 @@ export class PagAdminProductos {
     this.productoEditando = null;
     this.imagenBase64 = null;
 
-    this.form = {
-      id_producto: undefined,
+    this.formProducto.reset({
       nombre: '',
       descripcion: '',
       precio_venta: 0,
-      imagen: '',
+      stock: 0,
       id_categoria: 0,
       id_marca: 0,
       estado: 'activo'
-    };
+    });
+
 
     this.modalAbierto = true;
   }
 
   abrirModalEditar(p: Producto) {
     this.productoEditando = p;
-
-    this.form = {
-      id_producto: p.id_producto,
+    
+    this.formProducto.setValue({
       nombre: p.nombre,
       descripcion: p.descripcion,
       precio_venta: p.precio_venta,
-      imagen: p.imagen,
-      estado: p.estado,
+      stock: p.stock ?? 0,
       id_categoria: p.categoria?.id_categoria!,
       id_marca: p.marca?.id_marca!,
-      stock: p.stock ?? 0
-    };
+      estado: p.estado,
+      imagen: p.imagen || ''
+    });
 
-    this.imagenBase64 = p.imagen || null;
+    this.imagenBase64 = p.imagen 
+      ? p.imagen.replace(/^data:image\/\w+;base64,/, '')
+      : null;
 
     this.modalAbierto = true;
   }
+
 
 
   cerrarModal() {
@@ -167,54 +159,40 @@ export class PagAdminProductos {
 guardarProducto() {
 
   if (this.imagenBase64) {
-    this.form.imagen = this.imagenBase64;
+  this.formProducto.patchValue({ imagen: this.imagenBase64 });
   }
 
   // 🟢 Caso 1: CREAR PRODUCTO
-  if (!this.productoEditando) {
+ if (!this.productoEditando) {
 
-    this.productosService.crearProducto(this.form).subscribe({
-      next: (nuevo: any) => {
+  this.productosService.crearProducto(this.formProducto.value).subscribe({
+    next: () => {
+      this.cargarProductos();
+      this.cerrarModal();
+      Swal.fire({
+        icon: 'success',
+        title: 'Producto creado correctamente',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    },
+    error: () => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al crear el producto',
+        text: 'Revisa los datos e intenta nuevamente.'
+      });
+    }
+  });
 
-        const id = nuevo.id_producto;
+  return;
+}
 
-        const finalizar = () => {
-          this.cargarProductos();
-          this.cerrarModal();
-
-          Swal.fire({
-            icon: 'success',
-            title: 'Producto creado correctamente',
-            timer: 1500,
-            showConfirmButton: false
-          });
-        };
-
-        if (this.imagenBase64) {
-          this.productosService
-            .subirImagenBase64(id, this.imagenBase64)
-            .subscribe(finalizar);
-        } else {
-          finalizar();
-        }
-      },
-
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al crear el producto',
-          text: 'Revisa los datos e intenta nuevamente.'
-        });
-      }
-    });
-
-    return;
-  }
 
   // 🔵 Caso 2: EDITAR PRODUCTO
   const id = this.productoEditando.id_producto!;
 
-  this.productosService.actualizarProducto(id, this.form).subscribe({
+  this.productosService.actualizarProducto(id, this.formProducto.value).subscribe({
     next: () => {
 
       const finalizar = () => {
@@ -491,20 +469,25 @@ cerrarModalMarcas() {
 }
 
 
-  selectedCategoryName() {
-    const cat = this.categorias.find(c => c.id_categoria === this.form.id_categoria);
-    return cat?.nombre;
-  }
+selectedCategoryName() {
+  const idCat = this.formProducto.get('id_categoria')?.value;
+  const cat = this.categorias.find(c => c.id_categoria === idCat);
+  return cat?.nombre;
+}
+
 
   // ✅ Convertir a Base64
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
+onFileSelected(event: any) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagenBase64 = (reader.result as string).split(',')[1];
-    };
-    reader.readAsDataURL(file);
-  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = (reader.result as string).split(',')[1];
+    this.imagenBase64 = base64;
+    this.formProducto.patchValue({ imagen: base64 });
+  };
+  reader.readAsDataURL(file);
+}
+
 }

@@ -13,6 +13,7 @@ class Productos{
   }
 
   async crearProducto(req, res) {
+    console.log(req.body)
     try {
       const producto = req.body;
       const nuevoProducto = await ServicesProductos.crearProducto(producto);

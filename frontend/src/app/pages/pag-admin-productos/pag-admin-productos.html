@@ -151,31 +151,41 @@
       <!-- PREVIEW DEL PRODUCTO -->
       <div class="rounded-xl border shadow-sm p-4 bg-white">
 
-        <div class="rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center h-72">
-          <img *ngIf="imagenBase64 || form.imagen"
-               [src]="imagenBase64 ? ('data:image/jpeg;base64,' + imagenBase64) : form.imagen"
-               class="w-full h-full object-cover" />
-          <span *ngIf="!form.imagen && !imagenBase64" class="text-gray-400 text-sm">
-            Vista previa
-          </span>
-        </div>
+      <div class="rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center h-72">
+        <img *ngIf="imagenBase64 || formProducto.get('imagen')?.value"
+            [src]="imagenBase64 
+                    ? ('data:image/jpeg;base64,' + imagenBase64) 
+                    : formProducto.get('imagen')?.value"
+            class="w-full h-full object-cover" />
 
-        <div class="mt-4 text-sm text-gray-500">
-          {{ selectedCategoryName() || 'Categoría' }}
-        </div>
-
-        <h3 class="text-lg font-semibold">
-          {{ form.nombre || 'Nombre del producto' }}
-        </h3>
-
-        <div class="flex justify-between items-center mt-2">
-          <p class="font-semibold text-gray-900 text-lg">
-            {{ form.precio_venta ? ('$' + form.precio_venta) : 'Precio' }}
-          </p>
-          <span class="text-gray-500 text-sm">Stock: {{ form.stock || 0 }}</span>
-        </div>
-
+        <span *ngIf="!formProducto.get('imagen')?.value && !imagenBase64"
+              class="text-gray-400 text-sm">
+          Vista previa
+        </span>
       </div>
+
+      <div class="mt-4 text-sm text-gray-500">
+        {{ selectedCategoryName() || 'Categoría' }}
+      </div>
+
+      <h3 class="text-lg font-semibold">
+        {{ formProducto.get('nombre')?.value }}
+      </h3>
+
+      <div class="flex justify-between items-center mt-2">
+        <p class="font-semibold text-gray-900 text-lg">
+          {{ formProducto.get('precio_venta')?.value 
+              ? ('$' + formProducto.get('precio_venta')?.value)
+              : 'Precio' }}
+        </p>
+
+        <span class="text-gray-500 text-sm">
+          Stock: {{ formProducto.get('stock')?.value || 0 }}
+        </span>
+      </div>
+
+    </div>
+
 
       <!-- FORMULARIO REACTIVO -->
       <form [formGroup]="formProducto" (ngSubmit)="guardarProducto()" class="space-y-4">
@@ -204,8 +214,10 @@
         <!-- Imagen -->
         <div>
           <label class="block font-medium">Imagen (Archivo)</label>
-          <input type="file" accept="image/*" (change)="onFileSelected($event)"
-                 class="w-full border rounded-lg px-3 py-2">
+          <input type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                class="w-full border rounded-lg px-3 py-2" />
           <small class="text-gray-500">
             Si editas y no seleccionas una imagen nueva, se mantendrá la actual.
           </small>
@@ -248,8 +260,8 @@
         <!-- Marca -->
         <div>
           <label class="block font-medium">Marca</label>
-          <select formControlName="id_marca"
-                  class="w-full border rounded-lg px-3 py-2">
+          <select formControlName="id_marca">
+            <option value="">Seleccione una marca</option>
             <option *ngFor="let m of marcas" [value]="m.id_marca">
               {{ m.nombre }}
             </option>
