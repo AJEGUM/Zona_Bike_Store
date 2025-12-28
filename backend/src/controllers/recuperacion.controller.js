@@ -1,6 +1,7 @@
 const RecuperacionService = require("../services/recuperacion");
 const UsuariosController = require("./usuarios.controller");
 const EmailService = require("../services/emails");
+const SmsService = require("../services/TwiloSMS");
 const usuariosController = new UsuariosController();
 const bcrypt = require("bcrypt");
 
@@ -9,9 +10,13 @@ class RecuperacionController {
   async solicitarCodigo(req, res) {
     try {
       const { email } = req.body;
+      
+      // 1. El servicio ahora se encarga de TODO (Generar, Guardar, Email y SMS)
       const r = await RecuperacionService.solicitarCodigo(email);
+      
       res.json(r);
     } catch (error) {
+      console.error("Error en solicitarCodigo:", error.message);
       res.status(400).json({ mensaje: error.message });
     }
   }

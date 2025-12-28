@@ -1,0 +1,34 @@
+services:
+  # --- BASE DE DATOS ---
+  db:
+    image: mysql:8.0
+    container_name: bikestore-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: zona_bike_store_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      # Esta línea crea una carpeta 'mysql_data' en tu PC para que los datos sean eternos
+      - ./mysql_data:/var/lib/mysql
+
+  # --- BACKEND ---
+  backend:
+    build: ./backend
+    container_name: bikestore-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+
+  # --- FRONTEND (Angular) ---
+  frontend:
+    build: ./frontend
+    container_name: bikestore-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend

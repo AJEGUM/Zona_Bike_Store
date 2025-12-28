@@ -206,7 +206,7 @@ export class NavBar implements OnChanges {
         this.cerrarCarga();
         this.emailGuardado = this.emailRecuperacion;
         this.pasoRecuperacion = 2;
-        this.mostrarAlerta("Código enviado a tu correo");
+        this.mostrarAlerta("Código enviado a tu correo y teléfono registrado");        
       },
       error: () => {
         this.cerrarCarga();
