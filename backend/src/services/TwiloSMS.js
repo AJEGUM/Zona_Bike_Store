@@ -18,7 +18,7 @@ class SmsService {
       const mensaje = await client.messages.create({
         body: texto,
         from: process.env.TWILIO_PHONE_NUMBER,
-        to: '+18777804236'
+        to: telefono
       });
       
       console.log("SMS Enviado correctamente, SID:", mensaje.sid);

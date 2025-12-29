@@ -1,5 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    /* Aquí cambias los colores para cada cliente */
+    --primary-color: #a3bb4d;   /* Naranja para las bicis */
+    --secondary-color: #5f8cd4;
+  }
+}
 /* OK */
 
 button{
