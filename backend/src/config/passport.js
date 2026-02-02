@@ -59,9 +59,9 @@ passport.use(
 
         const { user, esNuevo } = await findOrCreateUser(nombre, email);
 
-        if (esNuevo) {
-          await EmailService.enviarCorreoBienvenida(user);
-        }
+        // if (esNuevo) {
+        //   await EmailService.enviarCorreoBienvenida(user);
+        // }
 
         // 🔹 Generamos el token aquí y lo devolvemos directamente
         const token = jwt.sign(

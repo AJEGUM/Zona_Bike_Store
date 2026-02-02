@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const EmailService = require("./emails");
+const axios = require('axios');
 
 class PagoService {
 
@@ -88,38 +89,63 @@ class PagoService {
     };
   }
 
+  async obtenerDatosUsuario(idUsuario) {
+    const [[usuario]] = await db.query(
+      "SELECT nombre, email, telefono FROM usuarios WHERE id_usuario = ?",
+      [idUsuario]
+    );
+    return usuario; // Ahora devuelve nombre, email y telefono
+  }
+
 
   // 4️⃣ Función madre
-  async procesarPago(data, idUsuario) {
-    const { items, total } = data;
+async procesarPago(data, idUsuario) {
+  const { items, total } = data;
+  if (!items || items.length === 0) throw new Error("No se recibieron productos.");
 
-    if (!items || items.length === 0) {
-      throw new Error("No se recibieron productos.");
-    }
+  try {
+    const idVenta = await this.crearVenta(idUsuario, total);
+    await this.registrarDetalleYActualizarStock(idVenta, items);
+    await this.registrarPago(idVenta, data);
 
+    // Obtener datos completos (incluyendo el nuevo campo telefono)
+    const usuario = await this.obtenerDatosUsuario(idUsuario);
+
+    // Enviar correo (ya lo tenías)
+    await EmailService.enviarCorreoCompra(usuario, items, total);
+
+    // --- NUEVO: Enviar WhatsApp mediante n8n ---
+    await this.enviarNotificacionN8N(usuario, items, total);
+
+    return {
+      mensaje: "Pago procesado correctamente. Correo y WhatsApp en camino.",
+      id_venta: idVenta
+    };
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+  // Funcion conectada con n8n
+  async enviarNotificacionN8N(usuario, items, total) {
     try {
-      // Crear venta
-      const idVenta = await this.crearVenta(idUsuario, total);
-
-      // Registrar detalles
-      await this.registrarDetalleYActualizarStock(idVenta, items);
-
-      // Registrar pago
-      await this.registrarPago(idVenta, data);
-
-      // Obtener correo + nombre del usuario
-      const usuario = await this.obtenerCorreoUsuario(idUsuario);
-
-      // Enviar correo correctamente
-      await EmailService.enviarCorreoCompra(usuario, items, total);
-
-      return {
-        mensaje: "Pago procesado correctamente. Correo enviado.",
-        id_venta: idVenta
-      };
-
+      // Usamos el nombre del servicio en Docker y el puerto 5678
+      const N8N_URL = 'http://bikestore-n8n:5678/webhook-test/nueva-compra'; 
+      
+      // En tu función enviarNotificacionN8N, limpia el teléfono antes de enviarlo
+      await axios.post(N8N_URL, {
+        cliente: usuario.nombre,
+        telefono: usuario.telefono.trim().replace(/\s/g, ''), // Esto quita espacios accidentales
+        email: usuario.email,
+        total: total,
+        productos: items.length,
+        tienda: "Zona Bike Store"
+      });
+      console.log("🚀 Notificación enviada a n8n");
     } catch (error) {
-      throw error;
+      console.error("❌ No se pudo avisar a n8n:", error.message);
+      // No lanzamos el error (throw) para que la venta no se caiga si n8n falla
     }
   }
 

@@ -23,7 +23,7 @@ class UsuariosController {
     const { nombre, email, clave, id_rol } = req.body;
     try {
       // 1️⃣ Encriptar la contraseña
-      const hash = await bcrypt.hash(clave, 10);
+      const hash = await bcrypt.hash(clave, 5);
 
       // 2️⃣ Insertar usuario en la DB
       const [result] = await db.query(
@@ -42,13 +42,13 @@ class UsuariosController {
         rol: rolNombre
       };
 
-      // 5️⃣ Enviar correo de bienvenida
-      try {
-        await EmailService.enviarCorreoBienvenida(nuevoUsuario);
-        console.log('Correo de bienvenida enviado a', email);
-      } catch (err) {
-        console.error('Error al enviar correo de bienvenida:', err.message);
-      }
+      // // 5️⃣ Enviar correo de bienvenida
+      // try {
+      //   await EmailService.enviarCorreoBienvenida(nuevoUsuario);
+      //   console.log('Correo de bienvenida enviado a', email);
+      // } catch (err) {
+      //   console.error('Error al enviar correo de bienvenida:', err.message);
+      // }
 
       // 6️⃣ Devolver usuario registrado
       res.json(nuevoUsuario);
@@ -69,7 +69,7 @@ class UsuariosController {
 
       // Si enviaron contraseña nueva → se encripta
       if (clave) {
-        hash = await bcrypt.hash(clave, 10);
+        hash = await bcrypt.hash(clave, 5);
       }
 
       await db.query(`
