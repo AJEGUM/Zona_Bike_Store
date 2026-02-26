@@ -29,7 +29,7 @@ function generarDatosUsuario() {
   };
 }
 
-// OK
+// OK, comentario para CRUD
 
 export default function () {
   const url = 'http://localhost:3000/api/usuarios';
