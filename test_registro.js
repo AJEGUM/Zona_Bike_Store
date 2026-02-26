@@ -29,6 +29,8 @@ function generarDatosUsuario() {
   };
 }
 
+// OK
+
 export default function () {
   const url = 'http://localhost:3000/api/usuarios';
   const payload = JSON.stringify(generarDatosUsuario());
