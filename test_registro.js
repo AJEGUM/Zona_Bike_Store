@@ -25,7 +25,7 @@ function generarDatosUsuario() {
     nombre: `Usuario ${idAleatorio}`,
     email: `test_${idAleatorio}@gmail.com`,
     clave: 'Password123', // Cumple con tu validación: 8 caracteres, mayúscula y número
-    id_rol: 2 // Asumiendo un ID de rol existente (ej: Cliente/Aprendiz)
+    id_rol: 2 
   };
 }
 
