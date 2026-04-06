@@ -1,54 +1,74 @@
 import http from 'k6/http';
-import { check, sleep } from 'k6';
+import { check, sleep, group } from 'k6';
+
+// 1. CONFIGURACIÓN GLOBAL
+const BASE_URL = __ENV.BASE_URL || 'https://ajegumdev.com/api'; // URL de producción por defecto
+const PASS_VIP = 'tu-clave-secreta'; // La que pusiste en Cloudflare
 
 export const options = {
-  ext: {
-    loadimpact: {
-      name: 'Diagnostico Registro Usuarios',
-      // Borramos el projectID para que k6 lo genere solo
-    }
-  },
   stages: [
-    { duration: '30s', target: 5 },
-    { duration: '1m', target: 10 },
+    { duration: '30s', target: 10 },
+    { duration: '1m', target: 20 },
     { duration: '30s', target: 0 },
   ],
   thresholds: {
     http_req_duration: ['p(95)<800'],
+    http_req_failed: ['rate<0.05'], // Que no falle más del 5% de peticiones
   },
 };
 
-// Función auxiliar para crear datos únicos en cada iteración
-function generarDatosUsuario() {
-  const idAleatorio = Math.floor(Math.random() * 100000);
-  return {
-    nombre: `Usuario ${idAleatorio}`,
-    email: `test_${idAleatorio}@gmail.com`,
-    clave: 'Password123', // Cumple con tu validación: 8 caracteres, mayúscula y número
-    id_rol: 2 // Asumiendo un ID de rol existente (ej: Cliente/Aprendiz)
-  };
+// 2. GENERADORES DE DATOS (Mantenlos aquí o en un archivo aparte)
+function datosRegistro() {
+  const id = Math.floor(Math.random() * 100000);
+  return JSON.stringify({
+    nombre: `User_${id}`,
+    email: `test_${id}@gmail.com`,
+    clave: 'Password123',
+    id_rol: 2
+  });
 }
 
-// OK, comentario para CRUD del software
+// 3. CABECERAS ESTÁNDAR (Incluye el Pase VIP)
+const params = {
+  headers: {
+    'Content-Type': 'application/json',
+    'X-K6-Test': PASS_VIP,
+  },
+};
 
+// 4. FLUJO DE PRUEBAS
 export default function () {
-  const url = 'http://localhost:3000/api/usuarios';
-  const payload = JSON.stringify(generarDatosUsuario());
-
-  const params = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  const res = http.post(url, payload, params);
-
-  // Verificaciones basadas en tu lógica de controlador
-  check(res, {
-    'registro exitoso (200)': (r) => r.status === 200,
-    'contiene id_usuario': (r) => r.json().hasOwnProperty('id_usuario'),
-    'contiene nombre de rol': (r) => r.json().rol !== null,
+  
+  // RUTA 1: Registro de Usuarios
+  group('Registro de Usuarios', function () {
+    const res = http.post(`${BASE_URL}/usuarios`, datosRegistro(), params);
+    check(res, {
+      'registro status 200': (r) => r.status === 200,
+      'tiene id_usuario': (r) => r.body && r.json().hasOwnProperty('id_usuario'),
+    });
   });
 
-  sleep(1); // El usuario tarda un poco entre registros
+  sleep(1);
+
+  // RUTA 2: Login (Fácil de añadir/quitar)
+  /*
+  group('Login de Usuarios', function () {
+    const payload = JSON.stringify({ email: 'test_123@gmail.com', clave: 'Password123' });
+    const res = http.post(`${BASE_URL}/auth/login`, payload, params);
+    check(res, {
+      'login status 200': (r) => r.status === 200,
+      'tiene token': (r) => r.json().hasOwnProperty('token'),
+    });
+  });
+  */
+
+  // RUTA 3: Obtener Productos (Lectura)
+  group('Listar Productos', function () {
+    const res = http.get(`${BASE_URL}/productos`, params);
+    check(res, {
+      'status 200': (r) => r.status === 200,
+    });
+  });
+
+  sleep(1);
 }
