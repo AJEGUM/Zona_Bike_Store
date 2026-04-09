@@ -28,5 +28,6 @@ app.use("/api/promociones", require("./routes/promociones.routes"));
 app.use('/api/roles', require('./routes/roles.routes'));
 app.use("/api/recuperacion", require("./routes/recuperacion.routes"));
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
+app.use('/api/whatsapp', require('./routes/whatsapp.routes'));
 
 module.exports = app;
