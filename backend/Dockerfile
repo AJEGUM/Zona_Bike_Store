@@ -7,6 +7,8 @@ WORKDIR /app
 # 3. Copiamos los archivos de dependencias primero (para aprovechar el cache)
 COPY package*.json ./
 
+RUN apk add --no-cache git
+
 # 4. Instalamos las dependencias
 RUN npm install
 
